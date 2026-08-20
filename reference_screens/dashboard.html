@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary-fixed-dim": "#79db8d",
+                "secondary": "#5d5f5f",
+                "error-red": "#ba1a1a",
+                "on-secondary-container": "#636565",
+                "surface-container-highest": "#dce3f2",
+                "background": "#f9f9ff",
+                "surface-tint": "#006d30",
+                "on-tertiary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "tertiary": "#00652c",
+                "surface-container": "#e7eefe",
+                "on-secondary-fixed": "#1a1c1c",
+                "inverse-on-surface": "#ebf1ff",
+                "outline-variant": "#becabc",
+                "on-tertiary-container": "#d3ffd5",
+                "on-primary": "#ffffff",
+                "on-primary-container": "#d3ffd5",
+                "secondary-fixed-dim": "#c6c7c6",
+                "on-tertiary-fixed-variant": "#005323",
+                "on-tertiary-fixed": "#00210a",
+                "secondary-container": "#e2e3e2",
+                "surface-variant": "#dce3f2",
+                "secondary-fixed": "#e2e3e2",
+                "outline": "#6f7a6e",
+                "on-secondary": "#ffffff",
+                "surface-container-low": "#f0f3ff",
+                "surface": "#f9f9ff",
+                "primary": "#00652c",
+                "surface-bright": "#f9f9ff",
+                "error": "#ba1a1a",
+                "on-secondary-fixed-variant": "#454747",
+                "on-surface-variant": "#3f493f",
+                "primary-fixed-dim": "#79db8d",
+                "surface-dim": "#d3daea",
+                "on-error": "#ffffff",
+                "inverse-primary": "#79db8d",
+                "error-container": "#ffdad6",
+                "on-surface": "#151c27",
+                "tertiary-fixed": "#95f8a7",
+                "inverse-surface": "#2a313c",
+                "tertiary-container": "#15803d",
+                "surface-container-high": "#e2e8f8",
+                "success-green": "#00652c",
+                "on-primary-fixed": "#00210a",
+                "on-primary-fixed-variant": "#005323",
+                "on-error-container": "#93000a",
+                "on-background": "#151c27",
+                "primary-fixed": "#95f8a7",
+                "primary-container": "#15803d"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "64px",
+                "sm": "16px",
+                "md": "24px",
+                "max-width": "1280px",
+                "gutter": "24px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "40px"
+        },
+        "fontFamily": {
+                "mono-data": [
+                        "JetBrains Mono"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "title-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Inter"
+                ],
+                "label-caps": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "mono-data": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "title-md": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-body-md text-on-background"><header class="fixed top-0 left-0 right-0 h-[72px] bg-surface-container-lowest border-b border-outline-variant z-50 px-md flex items-center justify-between"><div class="flex items-center gap-md"><img alt="CashBook Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJm-CmABP0LkKzZyWNdTo-FpbY89aEe6vMmDzfu43y67Lp2A06BOgMnSjRbDiXaXIm3MF-lwh6TBIu68EFIXn3JU6PCje8eKjG0kgfbNl1yNRs0rOOF4lgr5o-Lxd4A2PueiyQbbjZFd0uFutPn4hkrugL9e9jatj3O0GBfhkCpddXOS4Ja_RwuZYWKpaw1iTr_22dsTJ8RG4_-b--Hbd8QpRV7Y212iiOGwbiR6HBt-ETLFXTVYVK"/><span class="font-headline-lg text-headline-lg text-primary">CashBook</span><div class="ml-xl flex items-center gap-xs cursor-pointer px-sm py-xs bg-surface-container-low rounded-lg border border-outline-variant"><span class="font-title-md text-title-md text-on-surface">Apta Office</span><span class="material-symbols-outlined text-on-surface-variant">arrow_drop_down</span></div></div><div class="flex items-center gap-sm"><div class="text-right hidden sm:block"><div class="font-title-md text-title-md text-on-surface leading-tight">Jane Doe</div><div class="font-label-caps text-label-caps text-on-surface-variant">Administrator</div></div><img alt="Profile" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container ring-offset-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsOGqXhD5YiJxNOixZsNF2jF69K2QaJjXVHVeya8UAmAlMQhF-y3FXfs8FzCQ4gSjAFHil5Rg3mVhkbQmDNiNv7QkWjvsB0Dqp8SWgQjiO1OtoV0kTIzf1giu_M6cJzNE8cL2w7G-blAtY-ss_qVBLoDiETFOFnA8dRtsDNRnFXBWvjqQ5_h8SPh4Nj8ZNd1m6ZW2UsZ51dcgqr4QTKXXusd7sXd5ph1TslOGT5NMCbifISls89zkT"/></div></header><aside class="fixed left-0 top-[72px] h-[calc(100vh-72px)] w-[240px] bg-surface-container-lowest border-r border-outline-variant flex flex-col z-40"><nav class="flex-1 py-md px-sm overflow-y-auto" data-active-classes="bg-primary-container text-on-primary rounded-full font-bold"><div class="space-y-base mb-md"><a aria-current="page" class="flex items-center px-sm py-3 transition-all gap-sm bg-primary-container text-on-primary rounded-full font-bold" data-path="dashboard" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-body-md text-body-md">Dashboard</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="cashbook-entries" href="#"><span class="material-symbols-outlined">account_balance_wallet</span><span class="font-body-md text-body-md">CashBook</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="transactions" href="#"><span class="material-symbols-outlined">receipt_long</span><span class="font-body-md text-body-md">Transactions</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="reports" href="#"><span class="material-symbols-outlined">analytics</span><span class="font-body-md text-body-md">Reports</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="settings" href="#"><span class="material-symbols-outlined">settings</span><span class="font-body-md text-body-md">Settings</span></a></div></nav></aside><div class="pl-[240px] pt-[72px]"><main class="w-full min-h-screen bg-background"><div class="flex flex-col w-full p-lg gap-lg">
+<div class="flex items-center justify-between">
+<div class="flex flex-col gap-base">
+<h1 class="font-headline-lg text-headline-lg text-on-background">Dashboard</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Overview of your cashflow for this month.</p>
+</div>
+<button class="bg-primary text-on-primary font-title-md text-title-md px-md py-xs rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined">add</span>
+      Add Entry
+    </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm flex flex-col gap-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-title-md text-title-md">Current Balance</span>
+</div>
+<div class="font-display-lg text-display-lg text-primary tracking-tight">
+        ₹42,500
+      </div>
+<div class="flex items-center gap-base text-primary-container font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">+12% from last month</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm flex flex-col gap-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_downward</span>
+<span class="font-title-md text-title-md">Total Cash In</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface tracking-tight">
+        ₹85,000
+      </div>
+<div class="flex items-center gap-base text-on-surface-variant font-body-sm text-body-sm">
+<span class="">14 Transactions</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm flex flex-col gap-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-error/5 rounded-full blur-xl group-hover:bg-error/10 transition-colors"></div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_upward</span>
+<span class="font-title-md text-title-md">Total Cash Out</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface tracking-tight">
+        ₹42,500
+      </div>
+<div class="flex items-center gap-base text-on-surface-variant font-body-sm text-body-sm">
+<span class="">32 Transactions</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<div class="lg:col-span-1 bg-surface-container-lowest rounded-xl shadow-sm p-lg flex flex-col gap-md">
+<h2 class="font-title-md text-title-md text-on-surface">Cashflow Breakdown</h2>
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<svg class="w-full max-w-[240px] transform -rotate-90 drop-shadow-sm" viewbox="0 0 100 100">
+<circle class="stroke-error/20" cx="50" cy="50" fill="transparent" r="40" stroke-width="12"></circle>
+<circle class="stroke-primary" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="80" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Net Balance</span>
+<span class="font-headline-lg text-headline-lg text-primary tracking-tight">₹42.5k</span>
+</div>
+</div>
+<div class="flex flex-col gap-sm mt-md">
+<div class="flex items-center justify-between p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="font-body-md text-body-md text-on-surface-variant">Cash In</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface">66.6%</span>
+</div>
+<div class="flex items-center justify-between p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-error/20"></div>
+<span class="font-body-md text-body-md text-on-surface-variant">Cash Out</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface">33.4%</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm flex flex-col">
+<div class="p-md flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface">Recent Transactions</h2>
+<button class="font-body-sm text-body-sm text-primary hover:text-primary-container transition-colors">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="p-sm font-label-caps text-label-caps text-on-surface-variant uppercase">Date</th>
+<th class="p-sm font-label-caps text-label-caps text-on-surface-variant uppercase">Description</th>
+<th class="p-sm font-label-caps text-label-caps text-on-surface-variant uppercase">Category</th>
+<th class="p-sm font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="group hover:bg-surface-container-lowest transition-colors cursor-pointer border-b border-surface-container-low">
+<td class="p-sm whitespace-nowrap text-on-surface-variant">Today, 10:42 AM</td>
+<td class="p-sm font-medium">Client Payment - Project X</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] font-medium">Sales</span>
+</td>
+<td class="p-sm text-right font-mono-data text-mono-data text-primary">+ ₹15,000</td>
+</tr>
+<tr class="group hover:bg-surface-container-lowest transition-colors cursor-pointer border-b border-surface-container-low">
+<td class="p-sm whitespace-nowrap text-on-surface-variant">Yesterday</td>
+<td class="p-sm font-medium">Office Supplies</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] font-medium">Expenses</span>
+</td>
+<td class="p-sm text-right font-mono-data text-mono-data text-error">- ₹2,450</td>
+</tr>
+<tr class="group hover:bg-surface-container-lowest transition-colors cursor-pointer border-b border-surface-container-low">
+<td class="p-sm whitespace-nowrap text-on-surface-variant">Oct 24, 2023</td>
+<td class="p-sm font-medium">Monthly Rent</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] font-medium">Rent</span>
+</td>
+<td class="p-sm text-right font-mono-data text-mono-data text-error">- ₹12,000</td>
+</tr>
+<tr class="group hover:bg-surface-container-lowest transition-colors cursor-pointer border-b border-surface-container-low">
+<td class="p-sm whitespace-nowrap text-on-surface-variant">Oct 22, 2023</td>
+<td class="p-sm font-medium">Consulting Fee</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] font-medium">Services</span>
+</td>
+<td class="p-sm text-right font-mono-data text-mono-data text-primary">+ ₹8,500</td>
+</tr>
+<tr class="group hover:bg-surface-container-lowest transition-colors cursor-pointer border-b border-surface-container-low">
+<td class="p-sm whitespace-nowrap text-on-surface-variant">Oct 20, 2023</td>
+<td class="p-sm font-medium">Internet Bill</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] font-medium">Utilities</span>
+</td>
+<td class="p-sm text-right font-mono-data text-mono-data text-error">- ₹1,200</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div></main></div>
+</body></html>

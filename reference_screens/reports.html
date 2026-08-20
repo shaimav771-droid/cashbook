@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary-fixed-dim": "#79db8d",
+                "secondary": "#5d5f5f",
+                "error-red": "#ba1a1a",
+                "on-secondary-container": "#636565",
+                "surface-container-highest": "#dce3f2",
+                "background": "#f9f9ff",
+                "surface-tint": "#006d30",
+                "on-tertiary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "tertiary": "#00652c",
+                "surface-container": "#e7eefe",
+                "on-secondary-fixed": "#1a1c1c",
+                "inverse-on-surface": "#ebf1ff",
+                "outline-variant": "#becabc",
+                "on-tertiary-container": "#d3ffd5",
+                "on-primary": "#ffffff",
+                "on-primary-container": "#d3ffd5",
+                "secondary-fixed-dim": "#c6c7c6",
+                "on-tertiary-fixed-variant": "#005323",
+                "on-tertiary-fixed": "#00210a",
+                "secondary-container": "#e2e3e2",
+                "surface-variant": "#dce3f2",
+                "secondary-fixed": "#e2e3e2",
+                "outline": "#6f7a6e",
+                "on-secondary": "#ffffff",
+                "surface-container-low": "#f0f3ff",
+                "surface": "#f9f9ff",
+                "primary": "#00652c",
+                "surface-bright": "#f9f9ff",
+                "error": "#ba1a1a",
+                "on-secondary-fixed-variant": "#454747",
+                "on-surface-variant": "#3f493f",
+                "primary-fixed-dim": "#79db8d",
+                "surface-dim": "#d3daea",
+                "on-error": "#ffffff",
+                "inverse-primary": "#79db8d",
+                "error-container": "#ffdad6",
+                "on-surface": "#151c27",
+                "tertiary-fixed": "#95f8a7",
+                "inverse-surface": "#2a313c",
+                "tertiary-container": "#15803d",
+                "surface-container-high": "#e2e8f8",
+                "success-green": "#00652c",
+                "on-primary-fixed": "#00210a",
+                "on-primary-fixed-variant": "#005323",
+                "on-error-container": "#93000a",
+                "on-background": "#151c27",
+                "primary-fixed": "#95f8a7",
+                "primary-container": "#15803d"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xl": "64px",
+                "sm": "16px",
+                "md": "24px",
+                "max-width": "1280px",
+                "gutter": "24px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "40px"
+        },
+        "fontFamily": {
+                "mono-data": [
+                        "JetBrains Mono"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "title-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Inter"
+                ],
+                "label-caps": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "mono-data": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "title-md": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-body-md text-on-background"><header class="fixed top-0 left-0 right-0 h-[72px] bg-surface-container-lowest border-b border-outline-variant z-50 px-md flex items-center justify-between"><div class="flex items-center gap-md"><img alt="CashBook Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJm-CmABP0LkKzZyWNdTo-FpbY89aEe6vMmDzfu43y67Lp2A06BOgMnSjRbDiXaXIm3MF-lwh6TBIu68EFIXn3JU6PCje8eKjG0kgfbNl1yNRs0rOOF4lgr5o-Lxd4A2PueiyQbbjZFd0uFutPn4hkrugL9e9jatj3O0GBfhkCpddXOS4Ja_RwuZYWKpaw1iTr_22dsTJ8RG4_-b--Hbd8QpRV7Y212iiOGwbiR6HBt-ETLFXTVYVK"/><span class="font-headline-lg text-headline-lg text-primary">CashBook</span><div class="ml-xl flex items-center gap-xs cursor-pointer px-sm py-xs bg-surface-container-low rounded-lg border border-outline-variant"><span class="font-title-md text-title-md text-on-surface">Apta Office</span><span class="material-symbols-outlined text-on-surface-variant">arrow_drop_down</span></div></div><div class="flex items-center gap-sm"><div class="text-right hidden sm:block"><div class="font-title-md text-title-md text-on-surface leading-tight">Jane Doe</div><div class="font-label-caps text-label-caps text-on-surface-variant">Administrator</div></div><img alt="Profile" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container ring-offset-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsOGqXhD5YiJxNOixZsNF2jF69K2QaJjXVHVeya8UAmAlMQhF-y3FXfs8FzCQ4gSjAFHil5Rg3mVhkbQmDNiNv7QkWjvsB0Dqp8SWgQjiO1OtoV0kTIzf1giu_M6cJzNE8cL2w7G-blAtY-ss_qVBLoDiETFOFnA8dRtsDNRnFXBWvjqQ5_h8SPh4Nj8ZNd1m6ZW2UsZ51dcgqr4QTKXXusd7sXd5ph1TslOGT5NMCbifISls89zkT"/></div></header><aside class="fixed left-0 top-[72px] h-[calc(100vh-72px)] w-[240px] bg-surface-container-lowest border-r border-outline-variant flex flex-col z-40"><nav class="flex-1 py-md px-sm overflow-y-auto" data-active-classes="bg-tertiary text-on-tertiary rounded-full font-bold"><div class="space-y-base mb-md"><a aria-current="page" class="flex items-center px-sm py-3 transition-all gap-sm bg-tertiary text-on-tertiary rounded-full font-bold" data-path="dashboard" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-body-md text-body-md">Dashboard</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="cashbook-entries" href="#"><span class="material-symbols-outlined">account_balance_wallet</span><span class="font-body-md text-body-md">CashBook</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="transactions" href="#"><span class="material-symbols-outlined">receipt_long</span><span class="font-body-md text-body-md">Transactions</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="reports" href="#"><span class="material-symbols-outlined">assessment</span><span class="font-body-md text-body-md">Reports</span></a><a class="flex items-center px-sm py-3 transition-all text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg gap-sm" data-path="settings" href="#"><span class="material-symbols-outlined">settings</span><span class="font-body-md text-body-md">Settings</span></a></div></nav></aside><div class="pl-[240px] pt-[72px]"><main class="w-full min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="px-lg py-md flex items-center justify-between">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-background">Reports</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-base">Comprehensive financial overview</p>
+</div>
+<div class="flex items-center gap-sm">
+<div class="bg-surface-container-low rounded-lg px-sm py-xs flex items-center gap-xs cursor-pointer shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">calendar_today</span>
+<span class="font-body-sm text-body-sm text-on-surface">Oct 1 - Oct 31, 2023</span>
+</div>
+<div class="bg-surface-container-low rounded-lg px-sm py-xs flex items-center gap-xs cursor-pointer shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">store</span>
+<span class="font-body-sm text-body-sm text-on-surface">All Businesses</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">arrow_drop_down</span>
+</div>
+<button class="bg-tertiary text-on-tertiary px-sm py-xs rounded-lg font-body-sm text-body-sm shadow-md hover:shadow-lg transition-shadow">Generate Report</button>
+</div>
+</div>
+<div class="px-lg pb-md">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<!-- Opening Balance -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-container-low rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs">Opening Balance</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">$124,500.00</p>
+<div class="flex items-center gap-xs mt-sm text-primary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-body-sm text-body-sm">+2.4% vs last month</span>
+</div>
+</div>
+</div>
+<!-- Total Cash In -->
+<div class="bg-primary rounded-xl p-md shadow-sm relative overflow-hidden group text-on-primary">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container rounded-full opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs opacity-80">Total Cash In</p>
+<p class="font-headline-lg text-headline-lg">$85,240.50</p>
+<div class="flex items-center gap-xs mt-sm opacity-90">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+<span class="font-body-sm text-body-sm">Income</span>
+</div>
+</div>
+</div>
+<!-- Total Cash Out -->
+<div class="bg-error rounded-xl p-md shadow-sm relative overflow-hidden group text-on-error">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-error-container rounded-full opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs opacity-80">Total Cash Out</p>
+<p class="font-headline-lg text-headline-lg">$32,150.25</p>
+<div class="flex items-center gap-xs mt-sm opacity-90">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span class="font-body-sm text-body-sm">Expenses</span>
+</div>
+</div>
+</div>
+<!-- Closing Balance -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-container-low rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs">Closing Balance</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">$177,590.25</p>
+<div class="flex items-center gap-xs mt-sm text-primary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-body-sm text-body-sm">Reconciled</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-lg pb-lg">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Bar Chart Section -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-md shadow-sm">
+<h3 class="font-title-md text-title-md text-on-surface mb-md">Cash Flow Trends</h3>
+<div class="h-[300px] w-full flex items-end justify-between gap-xs px-sm pb-lg relative">
+<!-- Horizontal Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-lg">
+<div class="w-full border-t border-outline-variant/30 h-0"></div>
+<div class="w-full border-t border-outline-variant/30 h-0"></div>
+<div class="w-full border-t border-outline-variant/30 h-0"></div>
+<div class="w-full border-t border-outline-variant/30 h-0"></div>
+</div>
+<!-- Chart Bars -->
+<div class="relative w-full flex justify-between h-full group">
+<!-- Jun -->
+<div class="flex flex-col justify-end items-center gap-xs w-1/6 group/bar relative">
+<div class="flex gap-1 w-full justify-center items-end h-[240px]">
+<div class="w-1/3 bg-primary rounded-t-sm h-[40%] group-hover/bar:bg-primary-container transition-colors"></div>
+<div class="w-1/3 bg-error rounded-t-sm h-[30%] group-hover/bar:bg-error-container transition-colors"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Jun</span>
+</div>
+<!-- Jul -->
+<div class="flex flex-col justify-end items-center gap-xs w-1/6 group/bar relative">
+<div class="flex gap-1 w-full justify-center items-end h-[240px]">
+<div class="w-1/3 bg-primary rounded-t-sm h-[60%] group-hover/bar:bg-primary-container transition-colors"></div>
+<div class="w-1/3 bg-error rounded-t-sm h-[40%] group-hover/bar:bg-error-container transition-colors"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Jul</span>
+</div>
+<!-- Aug -->
+<div class="flex flex-col justify-end items-center gap-xs w-1/6 group/bar relative">
+<div class="flex gap-1 w-full justify-center items-end h-[240px]">
+<div class="w-1/3 bg-primary rounded-t-sm h-[50%] group-hover/bar:bg-primary-container transition-colors"></div>
+<div class="w-1/3 bg-error rounded-t-sm h-[55%] group-hover/bar:bg-error-container transition-colors"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Aug</span>
+</div>
+<!-- Sep -->
+<div class="flex flex-col justify-end items-center gap-xs w-1/6 group/bar relative">
+<div class="flex gap-1 w-full justify-center items-end h-[240px]">
+<div class="w-1/3 bg-primary rounded-t-sm h-[80%] group-hover/bar:bg-primary-container transition-colors"></div>
+<div class="w-1/3 bg-error rounded-t-sm h-[30%] group-hover/bar:bg-error-container transition-colors"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sep</span>
+</div>
+<!-- Oct -->
+<div class="flex flex-col justify-end items-center gap-xs w-1/6 group/bar relative">
+<div class="flex gap-1 w-full justify-center items-end h-[240px]">
+<div class="w-1/3 bg-primary rounded-t-sm h-[70%] group-hover/bar:bg-primary-container transition-colors"></div>
+<div class="w-1/3 bg-error rounded-t-sm h-[20%] group-hover/bar:bg-error-container transition-colors"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Oct</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center gap-md mt-sm">
+<div class="flex items-center gap-xs"><div class="w-3 h-3 rounded-full bg-primary"></div><span class="font-body-sm text-body-sm text-on-surface-variant">Cash In</span></div>
+<div class="flex items-center gap-xs"><div class="w-3 h-3 rounded-full bg-error"></div><span class="font-body-sm text-body-sm text-on-surface-variant">Cash Out</span></div>
+</div>
+</div>
+<!-- Pie Chart Section -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm flex flex-col">
+<h3 class="font-title-md text-title-md text-on-surface mb-md">Expense Categories</h3>
+<div class="flex-1 flex flex-col items-center justify-center">
+<div class="relative w-48 h-48 mb-lg">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="20"></circle>
+<!-- Office 35% -->
+<circle class="text-tertiary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="163.28" stroke-linecap="butt" stroke-width="20"></circle>
+<!-- Salary 30% -->
+<circle class="text-tertiary-container" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="175.84" stroke-linecap="butt" stroke-width="20" transform="rotate(126 50 50)"></circle>
+<!-- Marketing 15% -->
+<circle class="text-tertiary-fixed" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="213.52" stroke-linecap="butt" stroke-width="20" transform="rotate(234 50 50)"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="font-headline-lg text-headline-lg text-on-surface">6</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Categories</span>
+</div>
+</div>
+<div class="w-full space-y-3">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Office Supplies</span>
+</div>
+<span class="font-mono-data text-mono-data text-tertiary">35%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-tertiary-container"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Salary</span>
+</div>
+<span class="font-mono-data text-mono-data text-tertiary">30%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-tertiary-fixed"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Marketing</span>
+</div>
+<span class="font-mono-data text-mono-data text-tertiary">15%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-surface-variant"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Other</span>
+</div>
+<span class="font-mono-data text-mono-data text-tertiary">20%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-lg pb-xl">
+<div class="bg-surface-container-high rounded-xl p-md flex flex-col md:flex-row items-center justify-between shadow-sm">
+<div class="mb-md md:mb-0">
+<h4 class="font-title-md text-title-md text-on-surface">Export Data</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Download the current view in your preferred format.</p>
+</div>
+<div class="flex gap-sm">
+<button class="bg-surface-container-lowest text-on-surface px-sm py-xs rounded-lg font-body-sm text-body-sm shadow-sm flex items-center gap-xs hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+        </button>
+<button class="bg-surface-container-lowest text-on-surface px-sm py-xs rounded-lg font-body-sm text-body-sm shadow-sm flex items-center gap-xs hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">table_chart</span> Excel
+        </button>
+<button class="bg-surface-container-lowest text-on-surface px-sm py-xs rounded-lg font-body-sm text-body-sm shadow-sm flex items-center gap-xs hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">csv</span> CSV
+        </button>
+</div>
+</div>
+</div>
+</div></main></div>
+</body></html>
