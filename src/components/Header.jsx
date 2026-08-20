@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { dbService } from '../db';
 
@@ -23,6 +23,26 @@ export default function Header({ onMenuClick }) {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [workspaceError, setWorkspaceError] = useState('');
+
+  // Refs for click outside detection
+  const workspaceRef = useRef(null);
+  const bookRef = useRef(null);
+
+  // Click outside listener
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (workspaceRef.current && !workspaceRef.current.contains(event.target)) {
+        setWorkspaceDropdownOpen(false);
+      }
+      if (bookRef.current && !bookRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   
   // New book form state
   const [bookName, setBookName] = useState('');
@@ -95,7 +115,7 @@ export default function Header({ onMenuClick }) {
     <>
       <header className="fixed top-0 left-0 right-0 h-[72px] bg-surface-container-lowest border-b border-outline-variant z-50 px-3 sm:px-6 flex items-center justify-between shadow-sm">
         {/* Left Section: Logo, Hamburger and Book Switcher */}
-        <div className="flex items-center gap-1.5 sm:gap-4 overflow-hidden">
+        <div className="flex items-center gap-1.5 sm:gap-4">
           <button 
             onClick={onMenuClick}
             className="lg:hidden p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"
@@ -115,7 +135,7 @@ export default function Header({ onMenuClick }) {
 
           {/* Workspace Switcher */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="relative">
+            <div className="relative" ref={workspaceRef}>
               <button 
                 type="button"
                 onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
@@ -187,14 +207,15 @@ export default function Header({ onMenuClick }) {
           </div>
 
           {currentBook && (
-            <div className="relative">
-              <div 
+            <div className="relative" ref={bookRef}>
+              <button 
+                type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="ml-1 sm:ml-4 flex items-center gap-1 sm:gap-2 cursor-pointer px-2 sm:px-4 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 transition-colors"
+                className="ml-1 sm:ml-4 flex items-center gap-1 sm:gap-2 cursor-pointer px-2 sm:px-4 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 transition-colors text-left"
               >
                 <span className="text-xs sm:text-sm text-on-surface font-semibold max-w-[65px] sm:max-w-[120px] md:max-w-none truncate">{currentBook.name}</span>
                 <span className="material-symbols-outlined text-on-surface-variant text-[16px] sm:text-[20px]">arrow_drop_down</span>
-              </div>
+              </button>
 
               {dropdownOpen && (
                 <div className="absolute left-1 sm:left-4 mt-2 w-56 sm:w-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 py-2">

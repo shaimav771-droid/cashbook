@@ -46,6 +46,30 @@ export const AppProvider = ({ children }) => {
       localStorage.setItem(`cashbook_active_workspace_${user.id}`, workspaceName);
     }
     localStorage.setItem('cashbook_active_workspace', workspaceName);
+    localStorage.setItem('activeWorkspaceId', workspaceName);
+
+    // Immediately select currentBook for this workspace to prevent dashboard delay
+    if (user && allBooks.length > 0) {
+      const workspaceBooks = allBooks.filter(b => (b.workspace || '') === workspaceName);
+      if (workspaceBooks.length > 0) {
+        const storageKey = `cashbook_active_book_id_${user.id}_${workspaceName}`;
+        const savedBookId = localStorage.getItem(storageKey);
+        const match = workspaceBooks.find(b => b.id === savedBookId) || workspaceBooks[0];
+        setCurrentBook(match);
+        localStorage.setItem(storageKey, match.id);
+        localStorage.setItem(`cashbook_active_book_id_${user.id}`, match.id);
+        localStorage.setItem('activeBookId', match.id);
+        loadCategories(match.id);
+      } else {
+        setCurrentBook(null);
+        setCategories([]);
+        localStorage.removeItem('activeBookId');
+      }
+    } else {
+      setCurrentBook(null);
+      setCategories([]);
+      localStorage.removeItem('activeBookId');
+    }
   };
 
   const addWorkspace = (workspaceName) => {
@@ -136,6 +160,7 @@ export const AppProvider = ({ children }) => {
     } else {
       localStorage.setItem('cashbook_active_book_id', book.id);
     }
+    localStorage.setItem('activeBookId', book.id);
     await loadCategories(book.id);
   };
 
@@ -150,14 +175,17 @@ export const AppProvider = ({ children }) => {
         setCurrentBook(match);
         localStorage.setItem(storageKey, match.id);
         localStorage.setItem(`cashbook_active_book_id_${user.id}`, match.id);
+        localStorage.setItem('activeBookId', match.id);
         loadCategories(match.id);
       } else {
         setCurrentBook(null);
         setCategories([]);
+        localStorage.removeItem('activeBookId');
       }
     } else {
       setCurrentBook(null);
       setCategories([]);
+      localStorage.removeItem('activeBookId');
     }
   }, [currentWorkspace, allBooks, user]);
 
@@ -197,6 +225,8 @@ export const AppProvider = ({ children }) => {
       books,
       allBooks,
       currentWorkspace,
+      activeWorkspaceId: currentWorkspace,
+      activeBookId: currentBook?.id || null,
       selectWorkspace,
       addWorkspace,
       workspaces,
