@@ -21,7 +21,7 @@ export default function Header({ onMenuClick }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
-  const [workspaceModalOpen, setWorkspaceModalOpen] = useState(false);
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [workspaceError, setWorkspaceError] = useState('');
   
   // New book form state
@@ -73,7 +73,7 @@ export default function Header({ onMenuClick }) {
     addWorkspace(name);
     setNewWorkspaceName('');
     setWorkspaceError('');
-    setWorkspaceModalOpen(false);
+    setShowWorkspaceModal(false);
   };
 
   const getRoleColor = (role) => {
@@ -114,61 +114,76 @@ export default function Header({ onMenuClick }) {
           </div>
 
           {/* Workspace Switcher */}
-          <div className="relative">
-            <div 
-              onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
-              className="flex items-center gap-1 sm:gap-2 cursor-pointer px-2 sm:px-3.5 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[16px] sm:text-[18px] text-primary">add</span>
-              <span className="text-xs sm:text-sm text-on-surface font-semibold max-w-[65px] sm:max-w-[120px] md:max-w-none truncate">{currentWorkspace || 'Select Workspace'}</span>
-              <span className="material-symbols-outlined text-on-surface-variant text-[16px] sm:text-[20px]">arrow_drop_down</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="relative">
+              <button 
+                type="button"
+                onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
+                className="flex items-center gap-1 sm:gap-2 pointer-events-auto z-10 px-2 sm:px-3.5 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 transition-colors text-left cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px] sm:text-[18px] text-primary">folder</span>
+                <span className="text-xs sm:text-sm text-on-surface font-semibold max-w-[65px] sm:max-w-[120px] md:max-w-none truncate">{currentWorkspace || 'Select Workspace'}</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[16px] sm:text-[20px]">arrow_drop_down</span>
+              </button>
+
+              {workspaceDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-56 sm:w-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 py-2 pointer-events-auto">
+                  <div className="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant select-none">Workspaces</div>
+                  
+                  <div className="max-h-60 overflow-y-auto py-1">
+                    {workspaces.length === 0 ? (
+                      <div className="px-4 py-3 text-center text-body-xs text-on-surface-variant italic">
+                        No workspaces created
+                      </div>
+                    ) : (
+                      workspaces.map((ws) => (
+                        <button
+                          type="button"
+                          key={ws}
+                          onClick={() => {
+                            selectWorkspace(ws);
+                            setWorkspaceDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2.5 font-body-sm text-body-sm flex items-center justify-between hover:bg-surface-container-low transition-colors pointer-events-auto z-10 ${currentWorkspace === ws ? 'bg-primary/5 text-primary font-semibold' : 'text-on-surface'}`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[16px]">folder</span>
+                            {ws}
+                          </span>
+                          {currentWorkspace === ws && (
+                            <span className="material-symbols-outlined text-primary text-[16px]">check</span>
+                          )}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                  
+                  <div className="border-t border-outline-variant pt-2 px-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowWorkspaceModal(true);
+                        setWorkspaceDropdownOpen(false);
+                      }}
+                      className="w-full py-2 px-3 rounded-lg text-primary hover:bg-primary/5 text-left font-body-sm text-body-sm font-semibold flex items-center gap-2 transition-colors pointer-events-auto z-10"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">add</span>
+                      + Add New Workspace/Category
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {workspaceDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-56 sm:w-64 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 py-2">
-                <div className="px-4 py-2 font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant">Workspaces</div>
-                
-                <div className="max-h-60 overflow-y-auto py-1">
-                  {workspaces.length === 0 ? (
-                    <div className="px-4 py-3 text-center text-body-xs text-on-surface-variant italic">
-                      No workspaces created
-                    </div>
-                  ) : (
-                    workspaces.map((ws) => (
-                      <button
-                        key={ws}
-                        onClick={() => {
-                          selectWorkspace(ws);
-                          setWorkspaceDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 font-body-sm text-body-sm flex items-center justify-between hover:bg-surface-container-low transition-colors ${currentWorkspace === ws ? 'bg-primary/5 text-primary font-semibold' : 'text-on-surface'}`}
-                      >
-                        <span className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[16px]">folder</span>
-                          {ws}
-                        </span>
-                        {currentWorkspace === ws && (
-                          <span className="material-symbols-outlined text-primary text-[16px]">check</span>
-                        )}
-                      </button>
-                    ))
-                  )}
-                </div>
-                
-                <div className="border-t border-outline-variant pt-2 px-2">
-                  <button
-                    onClick={() => {
-                      setWorkspaceModalOpen(true);
-                      setWorkspaceDropdownOpen(false);
-                    }}
-                    className="w-full py-2 px-3 rounded-lg text-primary hover:bg-primary/5 text-left font-body-sm text-body-sm font-semibold flex items-center gap-2 transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">add</span>
-                    + Add New Workspace/Category
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* '+' Workspace Button */}
+            <button
+              type="button"
+              onClick={() => setShowWorkspaceModal(true)}
+              className="pointer-events-auto z-20 flex items-center justify-center p-1.5 sm:p-2 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 text-primary transition-colors h-[34px] w-[34px] sm:h-[38px] sm:w-[38px] cursor-pointer"
+              aria-label="Add Workspace"
+            >
+              <span className="material-symbols-outlined text-[16px] sm:text-[18px]">add</span>
+            </button>
           </div>
 
           {currentBook && (
@@ -348,21 +363,22 @@ export default function Header({ onMenuClick }) {
       )}
 
       {/* ADD NEW WORKSPACE/CATEGORY MODAL */}
-      {workspaceModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl w-full max-w-md mx-4 shadow-2xl p-6 relative">
+      {showWorkspaceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl w-full max-w-md mx-4 shadow-2xl p-6 relative pointer-events-auto">
             <button 
+              type="button"
               onClick={() => {
-                setWorkspaceModalOpen(false);
+                setShowWorkspaceModal(false);
                 setWorkspaceError('');
                 setNewWorkspaceName('');
               }}
-              className="absolute right-4 top-4 text-on-surface-variant hover:text-on-surface"
+              className="absolute right-4 top-4 text-on-surface-variant hover:text-on-surface pointer-events-auto z-10"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
 
-            <h3 className="font-headline-lg text-headline-lg text-on-background mb-4">Add Workspace / Category</h3>
+            <h3 className="font-headline-lg text-headline-lg text-on-background mb-4 select-none">Add Workspace / Category</h3>
             
             {workspaceError && (
               <div className="mb-4 p-3 bg-error-container text-on-error-container rounded-xl text-body-sm flex items-center gap-2">
@@ -373,7 +389,7 @@ export default function Header({ onMenuClick }) {
 
             <form onSubmit={handleCreateWorkspace} className="space-y-4">
               <div>
-                <label className="block font-label-caps text-label-caps text-on-surface-variant mb-2">Workspace Name</label>
+                <label className="block font-label-caps text-label-caps text-on-surface-variant mb-2 select-none">Workspace Name</label>
                 <input 
                   type="text" 
                   value={newWorkspaceName}
@@ -382,7 +398,7 @@ export default function Header({ onMenuClick }) {
                     setWorkspaceError('');
                   }}
                   placeholder="e.g. Shop, Office, Trip"
-                  className="w-full px-4 py-2.5 rounded-xl border border-outline-variant bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-on-surface"
+                  className="w-full px-4 py-2.5 rounded-xl border border-outline-variant bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-on-surface pointer-events-auto"
                   required
                   autoFocus
                 />
@@ -390,19 +406,19 @@ export default function Header({ onMenuClick }) {
 
               <div className="pt-4 flex items-center justify-end gap-3">
                 <button 
-                  type="button" 
+                  type="button"
                   onClick={() => {
-                    setWorkspaceModalOpen(false);
+                    setShowWorkspaceModal(false);
                     setWorkspaceError('');
                     setNewWorkspaceName('');
                   }}
-                  className="px-4 py-2 rounded-xl text-on-surface hover:bg-surface-container-low transition-colors font-title-md text-body-md"
+                  className="px-4 py-2 rounded-xl text-on-surface hover:bg-surface-container-low transition-colors font-title-md text-body-md pointer-events-auto z-10"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
-                  className="px-6 py-2 rounded-xl bg-primary text-on-primary font-title-md text-body-md hover:bg-primary-container hover:text-on-primary-container transition-colors"
+                  className="px-6 py-2 rounded-xl bg-primary text-on-primary font-title-md text-body-md hover:bg-primary-container hover:text-on-primary-container transition-colors pointer-events-auto z-10"
                 >
                   Add Workspace
                 </button>

@@ -44,12 +44,13 @@ export default function App() {
     let subscription: { unsubscribe: () => void } | null = null;
     
     if (supabase) {
-      const { data } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      const client = supabase;
+      const { data } = client.auth.onAuthStateChange((_event: any, session: any) => {
         if (session?.user) {
           // Prevent unverified users from logging in until their email is confirmed
           if (session.user.email && !session.user.email_confirmed_at) {
             useAuthStore.getState().setUser(null);
-            supabase.auth.signOut();
+            client.auth.signOut();
             useAuthStore.getState().setLoading(false);
             return;
           }
