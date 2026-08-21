@@ -1,24 +1,35 @@
-html, body {
-  width: 100%;
-  min-height: 100vh;
-  overflow-x: hidden !important;
+html {
+  height: 100%;
   overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
+  overflow-x: hidden !important;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
+body {
+  min-height: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  position: static !important;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
 #root {
-  width: 100%;
   min-height: 100vh;
+  overflow-y: visible !important;
+  overflow-x: hidden !important;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: visible;
+  width: 100%;
 }
 
 @tailwind base;
@@ -27,7 +38,6 @@ html, body {
 
 @layer base {
   html, body {
-    overscroll-behavior: none;
     background-color: #f9f9ff; /* bg-background */
     font-family: 'Inter', sans-serif;
   }
