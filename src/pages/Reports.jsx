@@ -353,7 +353,7 @@ export default function Reports() {
               Ledger Transactions List
             </div>
             
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto w-full max-w-full">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-outline-variant/30 text-on-surface-variant bg-surface-container-low/30">

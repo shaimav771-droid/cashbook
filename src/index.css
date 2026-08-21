@@ -9,6 +9,15 @@
     overscroll-behavior: none;
     background-color: #f9f9ff; /* bg-background */
     font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
   }
   
   main > :first-child {

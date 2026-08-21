@@ -676,7 +676,7 @@ export default function Transactions(props) {
         ) : (
           <>
             {/* Desktop view (table) */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto w-full max-w-full">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-surface-container-low text-on-surface-variant border-b border-outline-variant/30">
