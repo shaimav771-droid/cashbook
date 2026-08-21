@@ -36,13 +36,13 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-on-background flex flex-col font-body-md overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen pb-24 bg-background text-on-background flex flex-col font-body-md w-full">
       <InstallPrompt />
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="flex flex-1 pt-[72px] overflow-x-hidden w-full max-w-full">
+      <div className="flex flex-1 pt-[72px] w-full">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        <main className="flex-1 lg:pl-[240px] pl-0 pb-20 lg:pb-0 min-h-[calc(100vh-72px)] bg-background transition-all duration-300 overflow-x-hidden w-full max-w-full">
-          <div className="p-6 md:p-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+        <main className="flex-1 lg:pl-[240px] pl-0 min-h-[calc(100vh-72px)] bg-background transition-all duration-300 w-full">
+          <div className="p-6 md:p-8 max-w-7xl mx-auto w-full">
             {children}
           </div>
         </main>
