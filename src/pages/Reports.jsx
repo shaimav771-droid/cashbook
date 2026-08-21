@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { dbService } from '../db';
+import DateRangeDropdown from '../components/DateRangeDropdown';
+import { getPeriodDates } from '../utils/dateHelpers';
 
 export default function Reports() {
   const { currentBook, categories } = useApp();
@@ -10,6 +12,11 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
 
   // Custom date range state
+  const [period, setPeriod] = useState('this_month');
+  const [periodLabel, setPeriodLabel] = useState('This Month');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setDate(1); // Default to start of current month
@@ -18,6 +25,23 @@ export default function Reports() {
   const [endDate, setEndDate] = useState(() => {
     return new Date().toISOString().split('T')[0];
   });
+
+  const handlePeriodChange = (val, label, start, end) => {
+    setPeriod(val);
+    setPeriodLabel(label);
+    if (val === 'custom') {
+      setCustomStartDate(start || '');
+      setCustomEndDate(end || '');
+      setStartDate(start);
+      setEndDate(end);
+    } else {
+      setCustomStartDate('');
+      setCustomEndDate('');
+      const dates = getPeriodDates(val);
+      setStartDate(dates.startDate);
+      setEndDate(dates.endDate);
+    }
+  };
 
   // Report statistics
   const [openingBalance, setOpeningBalance] = useState(0);
@@ -149,22 +173,13 @@ export default function Reports() {
 
         {/* Date inputs */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-xs bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2 shadow-sm">
-            <span className="material-symbols-outlined text-[16px] text-on-surface-variant">date_range</span>
-            <input 
-              type="date" 
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="bg-transparent border-none outline-none font-semibold"
-            />
-            <span className="text-on-surface-variant">to</span>
-            <input 
-              type="date" 
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="bg-transparent border-none outline-none font-semibold"
-            />
-          </div>
+          <DateRangeDropdown
+            currentPeriod={period}
+            currentPeriodLabel={periodLabel}
+            currentCustomStartDate={customStartDate}
+            currentCustomEndDate={customEndDate}
+            onPeriodChange={handlePeriodChange}
+          />
 
           <button 
             onClick={loadReportData}
@@ -189,31 +204,31 @@ export default function Reports() {
           </div>
 
           {/* Stats Sheets */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
             {/* Opening Balance */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-5 shadow-sm">
-              <p className="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-1">Opening Balance</p>
-              <p className={`font-headline-lg text-lg md:text-xl font-bold ${openingBalance >= 0 ? 'text-on-surface' : 'text-error'}`}>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 p-3 rounded-xl shadow-sm">
+              <p className="text-[11px] font-semibold tracking-wider text-on-surface-variant uppercase mb-1">Opening Balance</p>
+              <p className={`text-base sm:text-xl font-bold truncate ${openingBalance >= 0 ? 'text-on-surface' : 'text-error'}`}>
                 {openingBalance < 0 ? '-' : ''}{symbol}{Math.abs(openingBalance).toLocaleString()}
               </p>
             </div>
 
             {/* Total In */}
-            <div className="bg-primary rounded-xl p-5 shadow-sm text-on-primary">
-              <p className="font-label-caps text-[10px] uppercase font-bold mb-1 opacity-80">Total Cash In</p>
-              <p className="font-headline-lg text-lg md:text-xl font-bold">{symbol}{totalIn.toLocaleString()}</p>
+            <div className="bg-primary p-3 rounded-xl shadow-sm text-on-primary">
+              <p className="text-[11px] font-semibold tracking-wider uppercase mb-1 opacity-80">Total Cash In</p>
+              <p className="text-base sm:text-xl font-bold truncate">{symbol}{totalIn.toLocaleString()}</p>
             </div>
 
             {/* Total Out */}
-            <div className="bg-error rounded-xl p-5 shadow-sm text-on-error">
-              <p className="font-label-caps text-[10px] uppercase font-bold mb-1 opacity-80">Total Cash Out</p>
-              <p className="font-headline-lg text-lg md:text-xl font-bold">{symbol}{totalOut.toLocaleString()}</p>
+            <div className="bg-error p-3 rounded-xl shadow-sm text-on-error">
+              <p className="text-[11px] font-semibold tracking-wider uppercase mb-1 opacity-80">Total Cash Out</p>
+              <p className="text-base sm:text-xl font-bold truncate">{symbol}{totalOut.toLocaleString()}</p>
             </div>
 
             {/* Closing Balance */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-5 shadow-sm">
-              <p className="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-1">Closing Balance</p>
-              <p className={`font-headline-lg text-lg md:text-xl font-bold ${closingBalance >= 0 ? 'text-primary' : 'text-error'}`}>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 p-3 rounded-xl shadow-sm">
+              <p className="text-[11px] font-semibold tracking-wider text-on-surface-variant uppercase mb-1">Closing Balance</p>
+              <p className={`text-base sm:text-xl font-bold truncate ${closingBalance >= 0 ? 'text-primary' : 'text-error'}`}>
                 {closingBalance < 0 ? '-' : ''}{symbol}{Math.abs(closingBalance).toLocaleString()}
               </p>
             </div>
