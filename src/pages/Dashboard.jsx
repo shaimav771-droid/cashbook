@@ -165,7 +165,7 @@ export default function Dashboard() {
       ) : (
         <>
           {/* Proportional Full-Width Current Balance Card */}
-          <div className="w-full bg-gradient-to-br from-[#00652c] via-[#005c28] to-[#004d21] text-white border border-[#004f22] rounded-2xl p-8 shadow-sm flex flex-col gap-3 relative overflow-hidden group hover:shadow-md transition-shadow">
+          <div className="w-full bg-gradient-to-br from-[#00652c] via-[#005c28] to-[#004d21] text-white border border-[#004f22] rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-3 relative overflow-hidden group hover:shadow-md transition-shadow">
             <div className="absolute -right-6 -top-6 w-36 h-36 bg-white/5 rounded-full blur-xl group-hover:bg-white/10 transition-colors"></div>
             <div className="absolute -left-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
             
@@ -183,7 +183,7 @@ export default function Dashboard() {
               </button>
             </div>
             
-            <div className="font-display-lg text-4xl md:text-5xl tracking-tight font-extrabold mt-2 z-10">
+            <div className="font-display-lg text-2xl sm:text-4xl font-bold tracking-tight mt-2 z-10">
               {balance < 0 ? '-' : ''}{symbol}{Math.abs(balance).toLocaleString()}
             </div>
             
@@ -194,45 +194,45 @@ export default function Dashboard() {
           </div>
 
           {/* Three Summary Cards - Single Clean Horizontal Row */}
-          <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 md:gap-6 pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6">
             {/* Cash In Card */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 md:p-6 shadow-sm flex flex-col gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow min-w-[280px] md:min-w-0 flex-1 shrink-0 snap-start">
-              <div className="flex items-center gap-2 text-on-surface-variant text-xs font-semibold">
-                <span className="material-symbols-outlined text-[18px] text-[#2E7D32] bg-[#2E7D32]/10 p-1.5 rounded-lg">arrow_downward</span>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl md:rounded-2xl p-2.5 sm:p-4 md:p-6 shadow-sm flex flex-col gap-1.5 sm:gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                <span className="material-symbols-outlined text-[16px] sm:text-[18px] text-[#2E7D32] bg-[#2E7D32]/10 p-1 sm:p-1.5 rounded-lg">arrow_downward</span>
                 <span>Cash In</span>
               </div>
-              <div className="font-display-lg text-2xl md:text-3xl text-on-surface tracking-tight font-bold">
+              <div className="font-display-lg text-sm sm:text-lg md:text-2xl font-bold text-gray-900 truncate">
                 {symbol}{totalIn.toLocaleString()}
               </div>
-              <div className="text-[11px] text-on-surface-variant font-medium">
+              <div className="text-[10px] text-gray-400 truncate hidden sm:block">
                 {inCount} Inflows recorded this period
               </div>
             </div>
 
             {/* Cash Out Card */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 md:p-6 shadow-sm flex flex-col gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow min-w-[280px] md:min-w-0 flex-1 shrink-0 snap-start">
-              <div className="flex items-center gap-2 text-on-surface-variant text-xs font-semibold">
-                <span className="material-symbols-outlined text-[18px] text-[#C62828] bg-[#C62828]/10 p-1.5 rounded-lg">arrow_upward</span>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl md:rounded-2xl p-2.5 sm:p-4 md:p-6 shadow-sm flex flex-col gap-1.5 sm:gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                <span className="material-symbols-outlined text-[16px] sm:text-[18px] text-[#C62828] bg-[#C62828]/10 p-1 sm:p-1.5 rounded-lg">arrow_upward</span>
                 <span>Cash Out</span>
               </div>
-              <div className="font-display-lg text-2xl md:text-3xl text-on-surface tracking-tight font-bold">
+              <div className="font-display-lg text-sm sm:text-lg md:text-2xl font-bold text-gray-900 truncate">
                 {symbol}{totalOut.toLocaleString()}
               </div>
-              <div className="text-[11px] text-on-surface-variant font-medium">
+              <div className="text-[10px] text-gray-400 truncate hidden sm:block">
                 {outCount} Outflows recorded this period
               </div>
             </div>
 
             {/* Total Transactions Card */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 md:p-6 shadow-sm flex flex-col gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow min-w-[280px] md:min-w-0 flex-1 shrink-0 snap-start">
-              <div className="flex items-center gap-2 text-on-surface-variant text-xs font-semibold">
-                <span className="material-symbols-outlined text-[18px] text-primary bg-primary/10 p-1.5 rounded-lg">history</span>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl md:rounded-2xl p-2.5 sm:p-4 md:p-6 shadow-sm flex flex-col gap-1.5 sm:gap-2 md:gap-3 relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                <span className="material-symbols-outlined text-[16px] sm:text-[18px] text-primary bg-primary/10 p-1 sm:p-1.5 rounded-lg">history</span>
                 <span>Total Transactions</span>
               </div>
-              <div className="font-display-lg text-2xl md:text-3xl text-on-surface tracking-tight font-bold">
+              <div className="font-display-lg text-sm sm:text-lg md:text-2xl font-bold text-gray-900 truncate">
                 {txs.length}
               </div>
-              <div className="text-[11px] text-on-surface-variant font-medium">
+              <div className="text-[10px] text-gray-400 truncate hidden sm:block">
                 Inflows & outflows combined
               </div>
             </div>
