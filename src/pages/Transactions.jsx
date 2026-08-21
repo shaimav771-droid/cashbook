@@ -23,8 +23,8 @@ const getCategoryIcon = (name) => {
   return CATEGORY_ICONS[name?.toLowerCase()] || "sell";
 };
 
-export default function Transactions({ hideHeader = false }) {
-  const { currentBook, categories } = useApp();
+export default function Transactions({ hideHeader = false, startDate = '', endDate = '' }) {
+  const { currentBook, categories, setCurrentTab, txTrigger, triggerTxUpdate } = useApp();
   
   // Authorization role
   const isReadOnly = currentBook?.role?.toLowerCase() === 'viewer';
@@ -38,10 +38,6 @@ export default function Transactions({ hideHeader = false }) {
   const [typeFilter, setTypeFilter] = useState('');
   const [catFilter, setCatFilter] = useState('');
   const [methodFilter, setMethodFilter] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [dateRangeLabel, setDateRangeLabel] = useState('All Time');
-  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
 
   // Pagination
@@ -73,7 +69,10 @@ export default function Transactions({ hideHeader = false }) {
 
   // Load transactions
   const loadTransactions = async () => {
-    if (!currentBook) return;
+    if (!currentBook) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const filters = {
@@ -95,7 +94,7 @@ export default function Transactions({ hideHeader = false }) {
 
   useEffect(() => {
     loadTransactions();
-  }, [currentBook, search, typeFilter, catFilter, methodFilter, startDate, endDate]);
+  }, [currentBook, search, typeFilter, catFilter, methodFilter, startDate, endDate, txTrigger]);
 
   useEffect(() => {
     // Set default category when categories load
@@ -103,42 +102,6 @@ export default function Transactions({ hideHeader = false }) {
       setTxCat(categories[0].id);
     }
   }, [categories]);
-
-  // Handle Preset Date Filter clicks
-  const applyPresetDate = (preset) => {
-    const today = new Date();
-    let start = '';
-    let end = today.toISOString().split('T')[0];
-
-    switch (preset) {
-      case 'today':
-        start = end;
-        setDateRangeLabel('Today');
-        break;
-      case '30days':
-        const d30 = new Date();
-        d30.setDate(today.getDate() - 30);
-        start = d30.toISOString().split('T')[0];
-        setDateRangeLabel('Last 30 Days');
-        break;
-      case '90days':
-        const d90 = new Date();
-        d90.setDate(today.getDate() - 90);
-        start = d90.toISOString().split('T')[0];
-        setDateRangeLabel('Last 90 Days');
-        break;
-      case 'all':
-      default:
-        start = '';
-        end = '';
-        setDateRangeLabel('All Time');
-        break;
-    }
-    setStartDate(start);
-    setEndDate(end);
-    setDateDropdownOpen(false);
-    setPage(1);
-  };
 
   const handleOpenAdd = () => {
     if (isReadOnly) return;
@@ -215,7 +178,7 @@ export default function Transactions({ hideHeader = false }) {
         await dbService.transactions.addTransaction(payload);
       }
       setFormOpen(false);
-      await loadTransactions();
+      triggerTxUpdate();
     } catch (err) {
       setFormError(err.message || "Failed to save transaction.");
     }
@@ -230,7 +193,7 @@ export default function Transactions({ hideHeader = false }) {
     setDeleteTxLoading(true);
     try {
       await dbService.transactions.deleteTransaction(txToDelete.id);
-      await loadTransactions();
+      triggerTxUpdate();
       setTxToDelete(null);
     } catch (err) {
       alert(err.message || "Failed to delete transaction.");
@@ -252,13 +215,43 @@ export default function Transactions({ hideHeader = false }) {
     return match ? match.name : "Uncategorized";
   };
 
+  if (!currentBook) {
+    return (
+      <div className="flex flex-col gap-6 w-full relative">
+        {!hideHeader && (
+          <div>
+            <h1 className="font-headline-lg text-2xl text-primary select-none">Transactions</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant">Manage and track your cash book ledger entries.</p>
+          </div>
+        )}
+
+        <div className="flex flex-col items-center justify-center py-16 px-4 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl text-center shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary">
+            <span className="material-symbols-outlined text-[32px]">receipt_long</span>
+          </div>
+          <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">No Active Cash Book</h3>
+          <p className="font-body-md text-body-md text-on-surface-variant max-w-sm mb-6">
+            Please select or create a Cash Book first to view and manage transactions.
+          </p>
+          <button 
+            onClick={() => setCurrentTab('cashbooks')}
+            className="bg-primary text-on-primary font-bold px-5 py-2.5 rounded-xl hover:bg-primary-container hover:text-on-primary-container transition-all flex items-center justify-center gap-2 shadow-sm"
+          >
+            <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+            Manage Cash Books
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6 w-full relative">
       {/* Top Section: Title & Actions */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         {!hideHeader && (
           <div>
-            <h1 className="font-headline-lg text-headline-lg text-primary select-none">Transactions</h1>
+            <h1 className="font-headline-lg text-2xl text-primary select-none">Transactions</h1>
             <p className="font-body-md text-body-md text-on-surface-variant">Manage and track your cash book ledger entries.</p>
           </div>
         )}
@@ -276,32 +269,11 @@ export default function Transactions({ hideHeader = false }) {
             />
           </div>
 
-          {/* Date presets selector */}
-          <div className="relative">
-            <button 
-              onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm text-xs font-semibold hover:shadow-md transition-all"
-            >
-              <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_month</span>
-              <span>{dateRangeLabel}</span>
-              <span className="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_drop_down</span>
-            </button>
-
-            {dateDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 py-1 text-xs">
-                <button onClick={() => applyPresetDate('all')} className="w-full text-left px-4 py-2 hover:bg-surface-container-low">All Time</button>
-                <button onClick={() => applyPresetDate('today')} className="w-full text-left px-4 py-2 hover:bg-surface-container-low">Today</button>
-                <button onClick={() => applyPresetDate('30days')} className="w-full text-left px-4 py-2 hover:bg-surface-container-low">Last 30 Days</button>
-                <button onClick={() => applyPresetDate('90days')} className="w-full text-left px-4 py-2 hover:bg-surface-container-low">Last 90 Days</button>
-              </div>
-            )}
-          </div>
-
           {/* Extra filter trigger */}
           <button 
             onClick={() => setFilterPanelOpen(!filterPanelOpen)}
             className={`flex items-center gap-1.5 px-4 py-2 bg-surface-container-lowest rounded-xl border shadow-sm text-xs font-semibold hover:shadow-md transition-all ${
-              filterPanelOpen || typeFilter || catFilter || methodFilter || startDate || endDate
+              filterPanelOpen || typeFilter || catFilter || methodFilter
                 ? 'border-primary text-primary bg-primary/5' 
                 : 'border-outline-variant/30 text-on-surface'
             }`}
@@ -309,22 +281,11 @@ export default function Transactions({ hideHeader = false }) {
             <span className="material-symbols-outlined text-[18px] text-on-surface-variant">filter_list</span>
             <span>Filter</span>
           </button>
-
-          {/* Add transaction float-trigger */}
-          {!isReadOnly && (
-            <button 
-              onClick={handleOpenAdd}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-primary text-on-primary rounded-xl shadow-md hover:shadow-lg hover:bg-primary-container hover:text-on-primary-container transition-all font-semibold text-xs"
-            >
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              <span>Add Transaction</span>
-            </button>
-          )}
         </div>
       </div>
 
       {/* Advanced Filters Panel */}
-      {(filterPanelOpen || typeFilter || catFilter || methodFilter || startDate || endDate) && (
+      {(filterPanelOpen || typeFilter || catFilter || methodFilter) && (
         <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div>
             <label className="block font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-1.5">Type</label>
@@ -369,39 +330,18 @@ export default function Transactions({ hideHeader = false }) {
           </div>
 
           <div className="flex gap-2 items-end">
-            <div className="flex-1 w-full">
-              <label className="block font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-1.5">Date Range</label>
-              <div className="flex gap-1.5 items-center w-full">
-                <input 
-                  type="date" 
-                  value={startDate} 
-                  onChange={(e) => { setStartDate(e.target.value); setDateRangeLabel('Custom'); setPage(1); }}
-                  className="flex-1 w-full p-2 border border-outline-variant bg-surface rounded-lg outline-none text-xs"
-                />
-                <span className="text-on-surface-variant shrink-0">-</span>
-                <input 
-                  type="date" 
-                  value={endDate} 
-                  onChange={(e) => { setEndDate(e.target.value); setDateRangeLabel('Custom'); setPage(1); }}
-                  className="flex-1 w-full p-2 border border-outline-variant bg-surface rounded-lg outline-none text-xs"
-                />
-              </div>
-            </div>
-            
             <button 
               onClick={() => {
                 setTypeFilter('');
                 setCatFilter('');
                 setMethodFilter('');
-                setStartDate('');
-                setEndDate('');
-                setDateRangeLabel('All Time');
                 setPage(1);
               }}
-              className="p-2 border border-error-red/20 text-error-red hover:bg-error-container hover:text-on-error-container rounded-lg shrink-0"
+              className="w-full py-2 border border-error-red/20 text-error-red hover:bg-error-container hover:text-on-error-container rounded-lg flex items-center justify-center gap-1.5 font-semibold"
               title="Reset Filters"
             >
               <span className="material-symbols-outlined text-[18px]">filter_alt_off</span>
+              <span>Reset Filters</span>
             </button>
           </div>
         </div>
@@ -926,6 +866,18 @@ export default function Transactions({ hideHeader = false }) {
         onCancel={() => setTxToDelete(null)}
         isLoading={deleteTxLoading}
       />
+
+      {/* Floating Action Button (FAB) */}
+      {!isReadOnly && (
+        <button 
+          onClick={handleOpenAdd}
+          className="fixed bottom-6 right-6 z-40 flex items-center justify-center gap-2 px-5 py-4 bg-primary text-on-primary rounded-full shadow-2xl hover:bg-primary-container hover:text-on-primary-container hover:scale-105 active:scale-95 transition-all font-bold text-sm tracking-wide border border-primary/20"
+          title="Add Transaction"
+        >
+          <span className="material-symbols-outlined text-[24px]">add</span>
+          <span className="pr-1">Add Transaction</span>
+        </button>
+      )}
     </div>
   );
 }

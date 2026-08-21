@@ -8,7 +8,6 @@ export default function Sidebar({ isOpen, onClose }) {
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
     { id: 'cashbooks', label: 'Cash Books', icon: 'account_balance_wallet' },
     { id: 'transactions', label: 'Transactions', icon: 'receipt_long' },
-    { id: 'reports', label: 'Reports', icon: 'analytics' },
     { id: 'settings', label: 'Settings', icon: 'settings' }
   ];
 
@@ -29,13 +28,10 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="space-y-1">
             {navItems.map((item) => {
               const isActive = currentTab === item.id;
-              // Disable pages if no book is active, except for Cash Books tab (where you can create/manage books)
-              const isDisabled = !currentBook && item.id !== 'cashbooks';
 
               return (
                 <button
                   key={item.id}
-                  disabled={isDisabled}
                   onClick={() => {
                     setCurrentTab(item.id);
                     if (onClose) onClose(); // Close mobile drawer on selection
@@ -43,8 +39,6 @@ export default function Sidebar({ isOpen, onClose }) {
                   className={`w-full flex items-center px-4 py-3 transition-all gap-3 rounded-full text-left font-semibold ${
                     isActive
                       ? 'bg-primary text-on-primary shadow-sm'
-                      : isDisabled
-                      ? 'opacity-40 cursor-not-allowed text-on-surface-variant'
                       : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
                   }`}
                 >

@@ -11,6 +11,9 @@ export const AppProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [customWorkspaces, setCustomWorkspaces] = useState([]);
+  const [txTrigger, setTxTrigger] = useState(0);
+
+  const triggerTxUpdate = () => setTxTrigger(prev => prev + 1);
   const [currentWorkspace, setCurrentWorkspace] = useState(() => {
     return localStorage.getItem('cashbook_active_workspace') || '';
   });
@@ -239,7 +242,9 @@ export const AppProvider = ({ children }) => {
       logoutUser,
       selectBook,
       refreshBooks: () => loadBooks(user),
-      refreshCategories: () => loadCategories(currentBook?.id)
+      refreshCategories: () => loadCategories(currentBook?.id),
+      txTrigger,
+      triggerTxUpdate
     }}>
       {children}
     </AppContext.Provider>

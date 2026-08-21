@@ -16,7 +16,7 @@ function AppContent() {
   const renderTabContent = () => {
     switch (currentTab) {
       case 'dashboard':
-        return currentBook ? <Dashboard /> : <CashBooks />;
+        return <Dashboard />;
       case 'cashbooks':
         return <CashBooks />;
       case 'transactions':
@@ -26,7 +26,7 @@ function AppContent() {
       case 'settings':
         return <Settings />;
       default:
-        return currentBook ? <Dashboard /> : <CashBooks />;
+        return <Dashboard />;
     }
   };
 

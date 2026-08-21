@@ -143,7 +143,7 @@ export default function Reports() {
       {/* Title & Range Selector */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 print:hidden">
         <div>
-          <h1 className="font-headline-lg text-headline-lg text-on-background select-none">Reports</h1>
+          <h1 className="font-headline-lg text-2xl text-on-background select-none">Reports</h1>
           <p className="font-body-md text-body-md text-on-surface-variant">Comprehensive financial statement generator.</p>
         </div>
 

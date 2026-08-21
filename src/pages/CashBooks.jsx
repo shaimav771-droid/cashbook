@@ -176,7 +176,7 @@ export default function CashBooks() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-headline-lg text-headline-lg text-on-background">Cash Books</h1>
+          <h1 className="font-headline-lg text-2xl text-on-background">Cash Books</h1>
           <p className="font-body-md text-body-md text-on-surface-variant">Manage your digital ledgers and collaboration channels.</p>
         </div>
         <button 

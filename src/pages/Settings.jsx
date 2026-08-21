@@ -4,7 +4,8 @@ import { dbService } from '../db';
 
 export default function Settings() {
   const { user, logoutUser } = useApp();
-  const [activeSubTab, setActiveSubTab] = useState('profile'); // 'profile', 'about', 'support'
+  const [activeSubTab, setActiveSubTab] = useState(null); // null (menu), 'profile', 'about', 'support'
+  const [isEditing, setIsEditing] = useState(false);
 
   // Profile Details State
   const [profileName, setProfileName] = useState(user?.name || '');
@@ -46,6 +47,7 @@ export default function Settings() {
     try {
       await dbService.auth.updateProfile(profileName);
       setProfileSuccess('Profile updated successfully! Refreshing details...');
+      setIsEditing(false);
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -111,12 +113,24 @@ export default function Settings() {
       <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
 
-        <div className="mb-6 relative z-10">
-          <h2 className="font-headline-lg text-title-md font-bold text-on-surface flex items-center gap-2 border-b border-outline-variant/30 pb-2 mb-2">
-            <span className="material-symbols-outlined text-primary text-[20px]">person</span>
-            Profile Details
-          </h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Manage your personal information and security details.</p>
+        <div className="flex justify-between items-center mb-6 border-b border-outline-variant/30 pb-3 relative z-10">
+          <div>
+            <h2 className="font-headline-lg text-title-md font-bold text-on-surface flex items-center gap-2 mb-1">
+              <span className="material-symbols-outlined text-primary text-[20px]">person</span>
+              Profile Details
+            </h2>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">Manage your personal information and security details.</p>
+          </div>
+          {!isEditing && (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-semibold rounded-lg transition-all shadow-sm border border-primary/20"
+            >
+              <span className="material-symbols-outlined text-[16px]">edit</span>
+              Edit Profile
+            </button>
+          )}
         </div>
 
         {profileError && (
@@ -134,20 +148,26 @@ export default function Settings() {
 
         <form onSubmit={handleUpdateProfile} className="space-y-6 text-xs max-w-2xl relative z-10">
           <div className="flex flex-col sm:flex-row gap-6 items-center">
-            <div className="relative group cursor-pointer shrink-0">
+            <div className={`relative shrink-0 ${isEditing ? 'group cursor-pointer' : ''}`}>
               <img
                 alt="Profile"
-                className="w-24 h-24 rounded-full object-cover ring-4 ring-surface-container-high shadow-md transition-transform duration-300 group-hover:scale-105"
+                className={`w-24 h-24 rounded-full object-cover ring-4 ring-surface-container-high shadow-md transition-transform duration-300 ${
+                  isEditing ? 'group-hover:scale-105' : ''
+                }`}
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
               />
-              <div className="absolute inset-0 bg-on-surface/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="material-symbols-outlined text-on-primary text-[24px]">photo_camera</span>
-              </div>
+              {isEditing && (
+                <div className="absolute inset-0 bg-on-surface/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-on-primary text-[24px]">photo_camera</span>
+                </div>
+              )}
             </div>
             <div className="text-center sm:text-left">
               <h3 className="font-title-md text-body-md font-bold text-on-surface">{user?.name}</h3>
               <p className="text-on-surface-variant text-[11px] mb-2">{user?.email}</p>
-              <button type="button" className="text-primary font-semibold hover:underline text-xs">Change Photo</button>
+              {isEditing && (
+                <button type="button" className="text-primary font-semibold hover:underline text-xs">Change Photo</button>
+              )}
             </div>
           </div>
 
@@ -158,7 +178,12 @@ export default function Settings() {
                 type="text"
                 value={profileName}
                 onChange={(e) => setProfileName(e.target.value)}
-                className="w-full bg-surface border border-outline-variant rounded-xl py-2.5 px-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                readOnly={!isEditing}
+                className={`w-full rounded-xl py-2.5 px-4 outline-none transition-all ${
+                  isEditing
+                    ? 'bg-surface border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent'
+                    : 'bg-surface-container border border-transparent cursor-default opacity-80 text-on-surface-variant'
+                }`}
                 required
               />
             </div>
@@ -177,16 +202,41 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-2 border-b border-outline-variant/30 pb-6">
-            <button
-              type="submit"
-              disabled={profileLoading}
-              className="bg-primary text-on-primary font-semibold text-xs px-5 py-2.5 rounded-xl hover:bg-primary-container hover:text-on-primary-container shadow transition-all flex items-center gap-1.5"
-            >
-              <span className="material-symbols-outlined text-[16px]">save</span>
-              {profileLoading ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
+          {isEditing ? (
+            <div className="flex justify-end gap-3 pt-2 border-b border-outline-variant/30 pb-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(false);
+                  setProfileName(user?.name || '');
+                  setProfileSuccess('');
+                  setProfileError('');
+                }}
+                className="border border-outline-variant text-on-surface hover:bg-surface-container-low font-semibold text-xs px-5 py-2.5 rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={profileLoading}
+                className="bg-primary text-on-primary font-semibold text-xs px-5 py-2.5 rounded-xl hover:bg-primary-container hover:text-on-primary-container shadow transition-all flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-[16px]">save</span>
+                {profileLoading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center pt-2 border-b border-outline-variant/30 pb-6">
+              <button
+                type="button"
+                onClick={logoutUser}
+                className="border border-error/30 text-error hover:bg-error/5 font-semibold text-xs px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-[16px]">logout</span>
+                Sign Out
+              </button>
+            </div>
+          )}
         </form>
 
         {/* Security Section */}
@@ -499,94 +549,120 @@ export default function Settings() {
     );
   };
 
+  if (activeSubTab === null) {
+    return (
+      <div className="flex flex-col w-full max-w-4xl mx-auto gap-8 px-4 py-6">
+        {/* Title */}
+        <div className="text-center sm:text-left select-none">
+          <h1 className="font-headline-lg text-3xl font-extrabold text-on-background tracking-tight">
+            Settings
+          </h1>
+          <p className="font-body-md text-body-md text-on-surface-variant mt-1.5">
+            Configure your Profile, review app statistics, and get Help &amp; Support.
+          </p>
+        </div>
+
+        {/* Main Options Menu */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+          {/* Option 1: Profile */}
+          <button
+            onClick={() => setActiveSubTab('profile')}
+            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+          >
+            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+              <span className="material-symbols-outlined text-[32px]">person</span>
+            </div>
+            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
+              Profile
+            </h3>
+            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
+              Manage your personal information, contact email, and update password credentials.
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+              Manage Profile
+              <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
+          </button>
+
+          {/* Option 2: About CashBook */}
+          <button
+            onClick={() => setActiveSubTab('about')}
+            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+          >
+            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+              <span className="material-symbols-outlined text-[32px]">info</span>
+            </div>
+            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
+              About CashBook
+            </h3>
+            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
+              Information about the application version, release channels, and core features.
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+              View App Info
+              <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
+          </button>
+
+          {/* Option 3: Help & Support */}
+          <button
+            onClick={() => setActiveSubTab('support')}
+            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+          >
+            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+              <span className="material-symbols-outlined text-[32px]">help</span>
+            </div>
+            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
+              Help &amp; Support
+            </h3>
+            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
+              Find answers to FAQs or directly submit ticket requests to our help desk.
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+              Get Support
+              <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Separated Logout button at the bottom of options */}
+        <div className="mt-8 border-t border-outline-variant/30 pt-6 flex justify-center sm:justify-start">
+          <button
+            onClick={logoutUser}
+            className="border border-error/30 text-error hover:bg-error/5 font-semibold text-xs px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <span className="material-symbols-outlined text-[16px]">logout</span>
+            Sign Out of Account
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col w-full gap-8">
-      {/* Title */}
-      <div>
-        <h1 className="font-headline-lg text-headline-lg text-on-background select-none">Settings</h1>
-        <p className="font-body-md text-body-md text-on-surface-variant">Configure your Profile, review app statistics, and get Help &amp; Support.</p>
+    <div className="flex flex-col w-full max-w-4xl mx-auto gap-6 px-4 py-6">
+      {/* Back Button Header */}
+      <div className="flex items-center justify-between border-b border-outline-variant/30 pb-4">
+        <button
+          onClick={() => {
+            setActiveSubTab(null);
+            setIsEditing(false);
+          }}
+          className="flex items-center gap-2 text-primary hover:bg-primary/5 font-semibold transition-all text-xs py-1.5 px-3 rounded-lg border border-primary/20 shadow-sm"
+        >
+          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span>Back to Settings</span>
+        </button>
+        <span className="text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider select-none bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant/30">
+          {activeSubTab === 'profile' ? 'Profile Details' : activeSubTab === 'about' ? 'About App' : 'Help & Support'}
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Navigation Sidebar */}
-        <div className="lg:col-span-3">
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
-            <button
-              onClick={() => setActiveSubTab('profile')}
-              className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between group transition-colors font-semibold ${
-                activeSubTab === 'profile'
-                  ? 'bg-surface-container text-on-surface'
-                  : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined text-[20px] ${activeSubTab === 'profile' ? 'text-primary' : 'text-on-surface-variant'}`}>
-                  person
-                </span>
-                <span className="font-body-md text-body-md">Profile</span>
-              </div>
-              <span className="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
-                chevron_right
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveSubTab('about')}
-              className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between group transition-colors font-semibold ${
-                activeSubTab === 'about'
-                  ? 'bg-surface-container text-on-surface'
-                  : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined text-[20px] ${activeSubTab === 'about' ? 'text-primary' : 'text-on-surface-variant'}`}>
-                  info
-                </span>
-                <span className="font-body-md text-body-md">About CashBook</span>
-              </div>
-              <span className="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
-                chevron_right
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveSubTab('support')}
-              className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between group transition-colors font-semibold ${
-                activeSubTab === 'support'
-                  ? 'bg-surface-container text-on-surface'
-                  : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined text-[20px] ${activeSubTab === 'support' ? 'text-primary' : 'text-on-surface-variant'}`}>
-                  help
-                </span>
-                <span className="font-body-md text-body-md">Help &amp; Support</span>
-              </div>
-              <span className="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
-                chevron_right
-              </span>
-            </button>
-
-            {/* Separated Logout button at the bottom */}
-            <div className="border-t border-outline-variant/30 my-2"></div>
-
-            <button
-              onClick={logoutUser}
-              className="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-error hover:bg-error-container hover:text-on-error-container transition-colors font-semibold"
-            >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-              <span className="font-body-md text-body-md">Logout</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Right Detail Panel Content */}
-        <div className="lg:col-span-9">
-          {activeSubTab === 'profile' && renderProfile()}
-          {activeSubTab === 'about' && renderAbout()}
-          {activeSubTab === 'support' && renderSupport()}
-        </div>
+      {/* Right Detail Panel Content */}
+      <div className="w-full">
+        {activeSubTab === 'profile' && renderProfile()}
+        {activeSubTab === 'about' && renderAbout()}
+        {activeSubTab === 'support' && renderSupport()}
       </div>
     </div>
   );

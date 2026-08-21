@@ -116,14 +116,6 @@ export default function Header({ onMenuClick }) {
       <header className="fixed top-0 left-0 right-0 h-[72px] bg-surface-container-lowest border-b border-outline-variant z-50 px-3 sm:px-6 flex items-center justify-between shadow-sm">
         {/* Left Section: Logo, Hamburger and Book Switcher */}
         <div className="flex items-center gap-1.5 sm:gap-4">
-          <button 
-            onClick={onMenuClick}
-            className="lg:hidden p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"
-            aria-label="Toggle Sidebar"
-          >
-            <span className="material-symbols-outlined text-[24px]">menu</span>
-          </button>
-
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <img 
               alt="CashBook Logo" 
@@ -194,16 +186,6 @@ export default function Header({ onMenuClick }) {
                 </div>
               )}
             </div>
-
-            {/* '+' Workspace Button */}
-            <button
-              type="button"
-              onClick={() => setShowWorkspaceModal(true)}
-              className="pointer-events-auto z-20 flex items-center justify-center p-1.5 sm:p-2 bg-surface-container-low rounded-lg border border-outline-variant hover:bg-surface-container/50 text-primary transition-colors h-[34px] w-[34px] sm:h-[38px] sm:w-[38px] cursor-pointer"
-              aria-label="Add Workspace"
-            >
-              <span className="material-symbols-outlined text-[16px] sm:text-[18px]">add</span>
-            </button>
           </div>
 
           {currentBook && (
@@ -262,40 +244,6 @@ export default function Header({ onMenuClick }) {
           {currentBook && (
             <div className={`hidden md:inline-flex items-center border px-3 py-1 rounded-full text-xs font-semibold ${getRoleColor(currentBook.role)}`}>
               {getDisplayRole(currentBook.role)} View
-            </div>
-          )}
-
-          {user && (
-            <div className="relative">
-              <div 
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-1.5 sm:gap-3 cursor-pointer select-none group"
-              >
-                <div className="text-right hidden sm:block">
-                  <div className="font-title-md text-title-md text-on-surface font-semibold group-hover:text-primary transition-colors">{user.name}</div>
-                  <div className="font-label-caps text-label-caps text-on-surface-variant">{user.email}</div>
-                </div>
-                <img 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary transition-all duration-300"
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-                />
-              </div>
-
-              {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 py-2">
-                  <button
-                    onClick={() => {
-                      logoutUser();
-                      setProfileDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/5 flex items-center gap-2 transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">logout</span>
-                    Sign Out
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>
