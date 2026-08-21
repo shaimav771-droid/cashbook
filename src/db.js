@@ -19,7 +19,7 @@ if (useSupabase) {
 // ----------------------------------------------------
 
 const DEFAULT_CATEGORIES = [
-  "Sales", "Salary", "Food", "Travel", "Fuel", "Office", "Marketing", "Purchase", "Refund", "Other"
+  "Sales", "Salary", "Food", "Travel", "Office", "Other"
 ];
 
 const SEED_DATA = {

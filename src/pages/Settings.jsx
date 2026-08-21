@@ -562,23 +562,25 @@ export default function Settings() {
           </p>
         </div>
 
-        {/* Main Options Menu */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+        {/* Main Options Menu - Stacked Vertically */}
+        <div className="flex flex-col gap-4 mt-2">
           {/* Option 1: Profile */}
           <button
             onClick={() => setActiveSubTab('profile')}
-            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+            className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 group w-full gap-4"
           >
-            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-              <span className="material-symbols-outlined text-[32px]">person</span>
+            <div className="bg-primary/10 text-primary p-3.5 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-sm shrink-0">
+              <span className="material-symbols-outlined text-[28px]">person</span>
             </div>
-            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
-              Profile
-            </h3>
-            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
-              Manage your personal information, contact email, and update password credentials.
-            </p>
-            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+            <div className="flex-1 flex flex-col gap-1">
+              <h3 className="font-title-md text-base font-bold text-on-surface group-hover:text-primary transition-colors">
+                Profile
+              </h3>
+              <p className="text-on-surface-variant text-xs leading-relaxed">
+                Manage your personal information, contact email, and update password credentials.
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline mt-2 sm:mt-0 shrink-0">
               Manage Profile
               <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>
@@ -587,18 +589,20 @@ export default function Settings() {
           {/* Option 2: About CashBook */}
           <button
             onClick={() => setActiveSubTab('about')}
-            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+            className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 group w-full gap-4"
           >
-            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-              <span className="material-symbols-outlined text-[32px]">info</span>
+            <div className="bg-primary/10 text-primary p-3.5 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-sm shrink-0">
+              <span className="material-symbols-outlined text-[28px]">info</span>
             </div>
-            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
-              About CashBook
-            </h3>
-            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
-              Information about the application version, release channels, and core features.
-            </p>
-            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+            <div className="flex-1 flex flex-col gap-1">
+              <h3 className="font-title-md text-base font-bold text-on-surface group-hover:text-primary transition-colors">
+                About CashBook
+              </h3>
+              <p className="text-on-surface-variant text-xs leading-relaxed">
+                Information about the application version, release channels, and core features.
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline mt-2 sm:mt-0 shrink-0">
               View App Info
               <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>
@@ -607,18 +611,20 @@ export default function Settings() {
           {/* Option 3: Help & Support */}
           <button
             onClick={() => setActiveSubTab('support')}
-            className="flex flex-col items-center sm:items-start text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+            className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/45 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 group w-full gap-4"
           >
-            <div className="bg-primary/10 text-primary p-4 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-              <span className="material-symbols-outlined text-[32px]">help</span>
+            <div className="bg-primary/10 text-primary p-3.5 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-sm shrink-0">
+              <span className="material-symbols-outlined text-[28px]">help</span>
             </div>
-            <h3 className="font-title-md text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">
-              Help &amp; Support
-            </h3>
-            <p className="text-on-surface-variant text-xs leading-relaxed flex-1">
-              Find answers to FAQs or directly submit ticket requests to our help desk.
-            </p>
-            <div className="mt-4 flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline">
+            <div className="flex-1 flex flex-col gap-1">
+              <h3 className="font-title-md text-base font-bold text-on-surface group-hover:text-primary transition-colors">
+                Help &amp; Support
+              </h3>
+              <p className="text-on-surface-variant text-xs leading-relaxed">
+                Find answers to FAQs or directly submit ticket requests to our help desk.
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-primary text-xs font-semibold group-hover:underline mt-2 sm:mt-0 shrink-0">
               Get Support
               <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>

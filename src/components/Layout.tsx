@@ -47,7 +47,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Fixed Bottom Navigation Bar for Mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest border-t border-outline-variant/30 z-50 flex justify-around items-center px-4 pb-safe shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t pb-safe h-16 flex justify-around items-center px-4 shadow-lg">
         {navItems.map((item) => {
           const isActive = currentTab === item.id;
           return (

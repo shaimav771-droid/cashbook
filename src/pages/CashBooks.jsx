@@ -223,7 +223,7 @@ export default function CashBooks() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {books.map((book) => {
             const balance = bookBalances[book.id] !== undefined ? bookBalances[book.id] : book.openingBalance;
             const symbol = getCurrencySymbol(book.currency);
@@ -232,7 +232,7 @@ export default function CashBooks() {
             return (
               <div 
                 key={book.id}
-                className={`bg-surface-container-lowest rounded-2xl border transition-all duration-300 relative overflow-hidden group flex flex-col justify-between ${
+                className={`bg-surface-container-lowest rounded-xl border transition-all duration-300 relative overflow-hidden group flex flex-col justify-between ${
                   isActive 
                     ? 'ring-2 ring-primary border-transparent shadow-md' 
                     : 'border-outline-variant/30 hover:border-primary/30 hover:shadow-lg'
@@ -243,15 +243,15 @@ export default function CashBooks() {
                   isActive ? 'from-primary to-inverse-primary' : 'from-outline-variant/40 to-outline-variant/20'
                 }`}></div>
 
-                <div className="p-6 flex-1 flex flex-col justify-between gap-6">
+                <div className="p-4 flex-1 flex flex-col justify-between gap-3">
                   <div>
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-2">
                       <div>
-                        <div className="flex items-center gap-1.5 mb-1 text-[10px] uppercase font-bold tracking-wider text-on-surface-variant font-label-caps">
+                        <div className="flex items-center gap-1.5 mb-0.5 text-[10px] uppercase font-bold tracking-wider text-on-surface-variant font-label-caps">
                           <span className="material-symbols-outlined text-[12px]">account_balance</span>
                           Role: {book.role}
                         </div>
-                        <h2 className="font-title-md text-title-md text-on-surface font-bold leading-tight group-hover:text-primary transition-colors">
+                        <h2 className="font-title-md text-base text-on-surface font-bold leading-tight group-hover:text-primary transition-colors">
                           {book.name}
                         </h2>
                       </div>
@@ -266,32 +266,32 @@ export default function CashBooks() {
                       )}
                     </div>
 
-                    <div className="bg-surface-container-low p-3 rounded-xl flex items-center justify-between text-xs mb-4">
+                    <div className="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between text-[11px] mb-2.5">
                       <div>
                         <span className="text-on-surface-variant">Currency</span>
-                        <div className="font-bold text-on-surface text-sm mt-0.5">{book.currency} ({symbol})</div>
+                        <div className="font-bold text-on-surface text-xs mt-0.5">{book.currency} ({symbol})</div>
                       </div>
                       <div className="text-right">
                         <span className="text-on-surface-variant">Opening Balance</span>
-                        <div className="font-bold text-on-surface text-sm mt-0.5">{symbol}{book.openingBalance.toLocaleString()}</div>
+                        <div className="font-bold text-on-surface text-xs mt-0.5">{symbol}{book.openingBalance.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between items-end border-t border-outline-variant/30 pt-4 mb-4">
-                      <span className="text-xs text-on-surface-variant">Current Balance</span>
-                      <div className={`text-headline-lg font-bold tracking-tight ${balance >= 0 ? 'text-primary' : 'text-error'}`}>
+                    <div className="flex justify-between items-end border-t border-outline-variant/30 pt-2.5 mb-2.5">
+                      <span className="text-[11px] text-on-surface-variant">Current Balance</span>
+                      <div className={`text-lg font-bold tracking-tight ${balance >= 0 ? 'text-primary' : 'text-error'}`}>
                         {balance < 0 ? '-' : ''}{symbol}{Math.abs(balance).toLocaleString()}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 pt-2">
+                    <div className="flex items-center justify-between gap-2 pt-1">
                       <button 
                         onClick={() => openSharingModal(book)}
-                        className="text-primary border border-primary/20 hover:bg-primary/5 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        className="text-primary border border-primary/20 hover:bg-primary/5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-colors"
                       >
-                        <span className="material-symbols-outlined text-[14px]">share</span>
+                        <span className="material-symbols-outlined text-[13px]">share</span>
                         {book.role?.toLowerCase() === 'owner' ? 'Manage Sharing' : 'View Members'}
                       </button>
 
@@ -300,14 +300,14 @@ export default function CashBooks() {
                           selectBook(book);
                           setCurrentTab('dashboard');
                         }}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all ${
                           isActive 
                             ? 'bg-primary text-on-primary' 
                             : 'bg-surface-container-low text-on-surface hover:bg-primary hover:text-on-primary'
                         }`}
                       >
                         <span>View</span>
-                        <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                       </button>
                     </div>
                   </div>
@@ -426,8 +426,8 @@ export default function CashBooks() {
                   </div>
                 )}
 
-                <form onSubmit={handleInvite} className="flex gap-2 items-end">
-                  <div className="flex-1">
+                <form onSubmit={handleInvite} className="flex flex-col gap-3">
+                  <div>
                     <label className="block text-[10px] font-semibold text-on-surface-variant uppercase mb-1">Email Address</label>
                     <input 
                       type="email" 
@@ -439,12 +439,12 @@ export default function CashBooks() {
                     />
                   </div>
 
-                  <div className="w-28">
+                  <div>
                     <label className="block text-[10px] font-semibold text-on-surface-variant uppercase mb-1">Role Type</label>
                     <select 
                       value={inviteRole} 
                       onChange={(e) => setInviteRole(e.target.value)}
-                      className="w-full px-2 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-xs focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-xs focus:outline-none"
                     >
                       <option value="Editor">Editor</option>
                       <option value="Viewer">Viewer</option>
@@ -454,7 +454,7 @@ export default function CashBooks() {
                   <button 
                     type="submit" 
                     disabled={inviteLoading}
-                    className="bg-primary text-on-primary px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container disabled:opacity-50 transition-colors"
+                    className="bg-primary text-on-primary px-4 py-2 rounded-lg text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container disabled:opacity-50 transition-colors w-full sm:w-auto self-end mt-1"
                   >
                     {inviteLoading ? 'Inviting...' : 'Invite'}
                   </button>

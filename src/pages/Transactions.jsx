@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { dbService } from '../db';
 import { ConfirmationModal } from '../components';
+import { getPeriodDates, getPeriodLabel } from '../utils/dateHelpers';
 
 const CATEGORY_ICONS = {
   "sales": "storefront",
@@ -23,8 +24,9 @@ const getCategoryIcon = (name) => {
   return CATEGORY_ICONS[name?.toLowerCase()] || "sell";
 };
 
-export default function Transactions({ hideHeader = false, startDate = '', endDate = '' }) {
-  const { currentBook, categories, setCurrentTab, txTrigger, triggerTxUpdate } = useApp();
+export default function Transactions(props) {
+  const { hideHeader = false, startDate = '', endDate = '' } = props;
+  const { currentBook, categories, setCurrentTab, txTrigger, triggerTxUpdate, refreshCategories } = useApp();
   
   // Authorization role
   const isReadOnly = currentBook?.role?.toLowerCase() === 'viewer';
@@ -39,6 +41,54 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
   const [catFilter, setCatFilter] = useState('');
   const [methodFilter, setMethodFilter] = useState('');
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+
+  // Local period states if not passed as props
+  const [localPeriod, setLocalPeriod] = useState('this_month');
+  const [localPeriodLabel, setLocalPeriodLabel] = useState('This Month');
+  const [localCustomStartDate, setLocalCustomStartDate] = useState('');
+  const [localCustomEndDate, setLocalCustomEndDate] = useState('');
+
+  // Use props if provided, otherwise use local state
+  const currentPeriod = props.period !== undefined ? props.period : localPeriod;
+  const currentPeriodLabel = props.periodLabel !== undefined ? props.periodLabel : localPeriodLabel;
+  const currentCustomStartDate = props.customStartDate !== undefined ? props.customStartDate : localCustomStartDate;
+  const currentCustomEndDate = props.customEndDate !== undefined ? props.customEndDate : localCustomEndDate;
+
+  // Period dropdown state
+  const [periodDropdownOpen, setPeriodDropdownOpen] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  // Calendar states
+  const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
+  const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
+  const [tempFrom, setTempFrom] = useState(null);
+  const [tempTo, setTempTo] = useState(null);
+
+  // Custom Category and Method dropdown states
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [catSearchQuery, setCatSearchQuery] = useState('');
+  const [methodDropdownOpen, setMethodDropdownOpen] = useState(false);
+
+  // Refs for click outside
+  const periodRef = useRef(null);
+  const catDropdownRef = useRef(null);
+  const methodDropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (periodRef.current && !periodRef.current.contains(event.target)) {
+        setPeriodDropdownOpen(false);
+      }
+      if (catDropdownRef.current && !catDropdownRef.current.contains(event.target)) {
+        setCatDropdownOpen(false);
+      }
+      if (methodDropdownRef.current && !methodDropdownRef.current.contains(event.target)) {
+        setMethodDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -75,13 +125,23 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
     }
     setLoading(true);
     try {
+      let activeStart = startDate;
+      let activeEnd = endDate;
+
+      // If startDate and endDate props are empty, use local period selection
+      if (!startDate && !endDate) {
+        const periodDates = getPeriodDates(currentPeriod, currentCustomStartDate, currentCustomEndDate);
+        activeStart = periodDates.startDate;
+        activeEnd = periodDates.endDate;
+      }
+
       const filters = {
         search,
         type: typeFilter,
         categoryId: catFilter,
         paymentMethod: methodFilter,
-        startDate,
-        endDate
+        startDate: activeStart,
+        endDate: activeEnd
       };
       const list = await dbService.transactions.getTransactions(currentBook.id, filters);
       setTxs(list);
@@ -94,7 +154,155 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
 
   useEffect(() => {
     loadTransactions();
-  }, [currentBook, search, typeFilter, catFilter, methodFilter, startDate, endDate, txTrigger]);
+  }, [currentBook, search, typeFilter, catFilter, methodFilter, startDate, endDate, currentPeriod, currentCustomStartDate, currentCustomEndDate, txTrigger]);
+
+  const handlePeriodSelect = (val, label) => {
+    if (props.onPeriodChange) {
+      props.onPeriodChange(val, label, '', '');
+    } else {
+      setLocalPeriod(val);
+      setLocalPeriodLabel(label);
+      setLocalCustomStartDate('');
+      setLocalCustomEndDate('');
+      setPage(1);
+    }
+    setPeriodDropdownOpen(false);
+  };
+
+  const handleApplyCustom = () => {
+    if (!tempFrom) return;
+    const start = tempFrom;
+    const end = tempTo || tempFrom;
+    
+    const formatDateLabel = (str) => {
+      const parts = str.split('-');
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+    const label = `${formatDateLabel(start)} - ${formatDateLabel(end)}`;
+
+    if (props.onPeriodChange) {
+      props.onPeriodChange('custom', label, start, end);
+    } else {
+      setLocalPeriod('custom');
+      setLocalPeriodLabel(label);
+      setLocalCustomStartDate(start);
+      setLocalCustomEndDate(end);
+      setPage(1);
+    }
+    setPeriodDropdownOpen(false);
+  };
+
+  const handleCreateCustomCategory = async () => {
+    const name = catSearchQuery.trim();
+    if (!name) return;
+    try {
+      setFormError('');
+      const newCat = await dbService.categories.addCategory(currentBook.id, name);
+      await triggerTxUpdate();
+      if (refreshCategories) {
+        await refreshCategories();
+      }
+      setTxCat(newCat.id);
+      setCatSearchQuery('');
+      setCatDropdownOpen(false);
+    } catch (err) {
+      setFormError(err.message || 'Failed to create category.');
+    }
+  };
+
+  const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const calendarMonthName = () => MONTH_NAMES[calendarMonth];
+
+  const getDaysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();
+  const getFirstDayOfMonth = (y, m) => new Date(y, m, 1).getDay();
+  const formatDateString = (y, m, d) => {
+    const mm = String(m + 1).padStart(2, '0');
+    const dd = String(d).padStart(2, '0');
+    return `${y}-${mm}-${dd}`;
+  };
+
+  const handlePrevMonth = () => {
+    if (calendarMonth === 0) {
+      setCalendarMonth(11);
+      setCalendarYear(prev => prev - 1);
+    } else {
+      setCalendarMonth(prev => prev - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (calendarMonth === 11) {
+      setCalendarMonth(0);
+      setCalendarYear(prev => prev + 1);
+    } else {
+      setCalendarMonth(prev => prev + 1);
+    }
+  };
+
+  const handleDateClick = (dateStr) => {
+    if (!tempFrom || (tempFrom && tempTo)) {
+      setTempFrom(dateStr);
+      setTempTo(null);
+    } else {
+      if (dateStr < tempFrom) {
+        setTempFrom(dateStr);
+      } else {
+        setTempTo(dateStr);
+      }
+    }
+  };
+
+  const generateCalendarDays = () => {
+    const daysInMonth = getDaysInMonth(calendarYear, calendarMonth);
+    const firstDayIndex = getFirstDayOfMonth(calendarYear, calendarMonth);
+    const days = [];
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      days.push(formatDateString(calendarYear, calendarMonth, d));
+    }
+
+    return days.map((dateStr, idx) => {
+      if (!dateStr) return <div key={`empty-${idx}`} className="h-7 w-7"></div>;
+
+      const isFrom = tempFrom === dateStr;
+      const isTo = tempTo === dateStr;
+      const isBetween = tempFrom && tempTo && dateStr > tempFrom && dateStr < tempTo;
+
+      let btnClass = "h-7 w-7 flex items-center justify-center font-mono-data text-[11px] transition-all relative ";
+
+      if (isFrom && isTo) {
+        btnClass += "bg-primary text-on-primary rounded-full font-bold";
+      } else if (isFrom) {
+        btnClass += `bg-primary text-on-primary font-bold ${tempTo ? 'rounded-l-full' : 'rounded-full'}`;
+      } else if (isTo) {
+        btnClass += "bg-primary text-on-primary font-bold rounded-r-full";
+      } else if (isBetween) {
+        btnClass += "bg-primary/15 text-primary rounded-none";
+      } else {
+        btnClass += "hover:bg-surface-container-low text-on-surface rounded-full";
+      }
+
+      const dayNum = parseInt(dateStr.split('-')[2]);
+
+      return (
+        <button
+          key={dateStr}
+          type="button"
+          onClick={() => handleDateClick(dateStr)}
+          className={btnClass}
+        >
+          {dayNum}
+        </button>
+      );
+    });
+  };
 
   useEffect(() => {
     // Set default category when categories load
@@ -267,6 +475,111 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             />
+          </div>
+
+          {/* Period filter dropdown selector */}
+          <div className="relative" ref={periodRef}>
+            <button 
+              type="button"
+              onClick={() => {
+                setPeriodDropdownOpen(!periodDropdownOpen);
+                setShowCalendar(currentPeriod === 'custom');
+              }}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm text-xs font-semibold hover:shadow-md transition-all animate-fade-in text-on-surface"
+            >
+              <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span>
+              <span>{currentPeriodLabel}</span>
+              <span className="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_drop_down</span>
+            </button>
+
+            {periodDropdownOpen && (
+              <div className="absolute right-0 mt-2 bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden text-xs min-w-[160px]">
+                {!showCalendar ? (
+                  /* Presets Column only */
+                  <div className="p-2 flex flex-col gap-1">
+                    <div className="px-3 py-1 text-[10px] uppercase font-bold text-on-surface-variant/60 tracking-wider">Presets</div>
+                    <button type="button" onClick={() => handlePeriodSelect('today', 'Today')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'today' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>Today</button>
+                    <button type="button" onClick={() => handlePeriodSelect('this_week', 'This Week')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_week' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>This Week</button>
+                    <button type="button" onClick={() => handlePeriodSelect('this_month', 'This Month')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_month' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>This Month</button>
+                    <button type="button" onClick={() => handlePeriodSelect('all', 'All Time')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'all' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>All Time</button>
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setShowCalendar(true);
+                        if (!tempFrom && currentCustomStartDate) {
+                          setTempFrom(currentCustomStartDate);
+                          setTempTo(currentCustomEndDate);
+                        }
+                      }} 
+                      className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors border-t border-outline-variant/20 mt-1 font-semibold text-primary ${currentPeriod === 'custom' ? 'bg-primary/15' : 'hover:bg-surface-container-low'}`}
+                    >
+                      Custom Range
+                    </button>
+                  </div>
+                ) : (
+                  /* Calendar Column only */
+                  <div className="w-[280px] p-3 flex flex-col gap-3">
+                    <div className="flex items-center gap-1.5 -ml-1 border-b border-outline-variant/30 pb-2 mb-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowCalendar(false)}
+                        className="p-1 hover:bg-surface-container-low rounded-full flex items-center justify-center"
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_back</span>
+                      </button>
+                      <span className="font-semibold text-xs text-on-surface">Select Custom Range</span>
+                    </div>
+
+                    <div className="flex items-center justify-between mb-1">
+                      <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-surface-container-low rounded-full">
+                        <span className="material-symbols-outlined text-[16px] text-on-surface-variant">chevron_left</span>
+                      </button>
+                      <span className="font-bold text-xs text-on-surface">
+                        {calendarMonthName()} {calendarYear}
+                      </span>
+                      <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-surface-container-low rounded-full">
+                        <span className="material-symbols-outlined text-[16px] text-on-surface-variant">chevron_right</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-y-1 text-center font-bold text-[10px] text-on-surface-variant/70 mb-0.5">
+                      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-y-1 justify-items-center">
+                      {generateCalendarDays()}
+                    </div>
+
+                    <div className="flex flex-col gap-2 pt-2 border-t border-outline-variant/30 text-[10px]">
+                      <div className="flex items-center justify-between text-on-surface-variant">
+                        <span>From: <strong className="text-on-surface font-mono-data">{tempFrom || 'Select'}</strong></span>
+                        <span>To: <strong className="text-on-surface font-mono-data">{tempTo || 'Select'}</strong></span>
+                      </div>
+                      <div className="flex items-center justify-end gap-2 mt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTempFrom(null);
+                            setTempTo(null);
+                          }}
+                          className="px-2.5 py-1 border border-outline-variant rounded-md hover:bg-surface-container-low text-on-surface transition-colors"
+                        >
+                          Clear
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!tempFrom}
+                          onClick={handleApplyCustom}
+                          className="px-3.5 py-1 bg-primary text-on-primary font-semibold rounded-md hover:bg-primary-container disabled:opacity-50 transition-colors"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Extra filter trigger */}
@@ -467,8 +780,8 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
               </table>
             </div>
 
-            {/* Mobile view (card list) */}
-            <div className="block md:hidden divide-y divide-outline-variant/20">
+            {/* Mobile view (card-table hybrid) */}
+            <div className="block md:hidden divide-y divide-outline-variant/10">
               {displayedTxs.map((t) => {
                 const symbol = getCurrencySymbol(currentBook.currency);
                 const isCashIn = t.type === 'In';
@@ -476,56 +789,64 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
                 const catIcon = getCategoryIcon(catName);
 
                 return (
-                  <div key={t.id} className="p-4 flex flex-col gap-3 hover:bg-surface-container-low/40 transition-colors">
-                    {/* Top Row: Date & Type */}
-                    <div className="flex justify-between items-center">
-                      <span className="font-mono-data text-on-surface-variant font-medium text-[11px]">
-                        {new Date(t.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
-                      </span>
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        isCashIn ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FFEBEE] text-[#C62828]'
-                      }`}>
-                        {isCashIn ? 'Cash In' : 'Cash Out'}
-                      </span>
-                    </div>
-
-                    {/* Middle Row: Description & Amount */}
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-on-surface leading-snug break-words">{t.description}</div>
-                        {t.note && <div className="text-on-surface-variant text-[11px] mt-1 break-words">{t.note}</div>}
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-variant text-on-surface rounded-full text-[10px] font-medium border border-outline-variant/20">
-                            <span className="material-symbols-outlined text-[12px]">{catIcon}</span>
-                            {catName}
-                          </span>
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-variant text-on-surface-variant rounded-full text-[10px] font-medium border border-outline-variant/20">
-                            {t.paymentMethod}
-                          </span>
+                  <div key={t.id} className="p-3.5 flex flex-col gap-2 hover:bg-surface-container-low/40 transition-colors">
+                    {/* Main Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      {/* Left: Category Icon & Text details */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${
+                          isCashIn ? 'bg-[#E8F5E9] text-[#2E7D32] border-[#2E7D32]/10' : 'bg-[#FFEBEE] text-[#C62828] border-[#C62828]/10'
+                        }`}>
+                          <span className="material-symbols-outlined text-[20px]">{catIcon}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-sm text-on-surface truncate leading-tight">{t.description}</div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-on-surface-variant font-medium mt-1">
+                            <span className="font-mono-data">{new Date(t.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}</span>
+                            <span className="opacity-30">•</span>
+                            <span>{t.paymentMethod}</span>
+                            <span className="opacity-30">•</span>
+                            <span className="font-semibold text-primary">{catName}</span>
+                          </div>
                         </div>
                       </div>
 
-                      <div className={`font-mono-data font-bold text-base shrink-0 text-right ${
-                        isCashIn ? 'text-[#2E7D32]' : 'text-[#C62828]'
-                      }`}>
-                        {isCashIn ? '+' : '-'}{symbol}{t.amount.toLocaleString()}
+                      {/* Right: Amount & Compact Badge */}
+                      <div className="flex flex-col items-end shrink-0">
+                        <div className={`font-mono-data font-bold text-sm ${
+                          isCashIn ? 'text-[#2E7D32]' : 'text-[#C62828]'
+                        }`}>
+                          {isCashIn ? '+' : '-'}{symbol}{t.amount.toLocaleString()}
+                        </div>
+                        <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase mt-1 tracking-wider ${
+                          isCashIn ? 'bg-[#E8F5E9] text-[#2E7D32] border border-[#2E7D32]/15' : 'bg-[#FFEBEE] text-[#C62828] border border-[#C62828]/15'
+                        }`}>
+                          {isCashIn ? 'In' : 'Out'}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Bottom Row: Actions (Receipt & CRUD) */}
-                    <div className="flex items-center justify-between border-t border-outline-variant/10 pt-2 mt-1">
+                    {/* Note if exists */}
+                    {t.note && (
+                      <div className="pl-[52px] text-[11px] text-on-surface-variant/80 italic break-words line-clamp-1 bg-surface-container-low/30 p-1.5 rounded border-l-2 border-outline-variant/30">
+                        {t.note}
+                      </div>
+                    )}
+
+                    {/* Actions Row */}
+                    <div className="pl-[52px] flex items-center justify-between border-t border-outline-variant/5 pt-1.5 mt-0.5">
                       {/* Left: Receipt Preview */}
                       <div>
                         {t.attachment ? (
                           <button 
                             onClick={() => setPreviewAttachment(t.attachment)}
-                            className="text-primary hover:text-primary-container p-2 -ml-2 rounded-lg hover:bg-primary/5 transition-all flex items-center gap-1 font-semibold"
+                            className="text-primary hover:text-primary-container p-1 rounded-lg hover:bg-primary/5 transition-all flex items-center gap-1 font-semibold text-[11px]"
                           >
-                            <span className="material-symbols-outlined text-[20px]">description</span>
-                            <span className="text-[11px]">View Receipt</span>
+                            <span className="material-symbols-outlined text-[16px]">description</span>
+                            <span>Receipt</span>
                           </button>
                         ) : (
-                          <span className="text-on-surface-variant/40 text-[11px] italic">No receipt</span>
+                          <span className="text-on-surface-variant/30 text-[10px] italic">No receipt</span>
                         )}
                       </div>
 
@@ -534,17 +855,17 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
                         <div className="flex items-center gap-1">
                           <button 
                             onClick={() => handleOpenEdit(t)}
-                            className="p-2.5 text-on-surface-variant hover:text-primary rounded-xl hover:bg-surface-variant/60 transition-colors flex items-center justify-center min-w-[40px] min-h-[40px]"
+                            className="p-1.5 text-on-surface-variant hover:text-primary rounded-lg hover:bg-surface-variant/40 transition-colors flex items-center justify-center"
                             title="Edit transaction"
                           >
-                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                            <span className="material-symbols-outlined text-[16px]">edit</span>
                           </button>
                           <button 
                             onClick={() => handleDeleteClick(t)}
-                            className="p-2.5 text-on-surface-variant hover:text-error rounded-xl hover:bg-error-container/60 transition-colors flex items-center justify-center min-w-[40px] min-h-[40px]"
+                            className="p-1.5 text-on-surface-variant hover:text-error rounded-lg hover:bg-error-container/40 transition-colors flex items-center justify-center"
                             title="Delete transaction"
                           >
-                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
                           </button>
                         </div>
                       )}
@@ -599,7 +920,7 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
       {!isReadOnly && !formOpen && !hideHeader && (
         <button 
           onClick={handleOpenAdd}
-          className="fixed bottom-6 right-6 lg:right-10 z-40 flex items-center justify-center gap-1.5 px-5 py-3.5 bg-primary text-on-primary rounded-full shadow-[0_8px_32px_rgba(0,109,48,0.35)] hover:shadow-[0_12px_48px_rgba(0,109,48,0.55)] hover:-translate-y-0.5 transition-all duration-300 group"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 lg:right-10 z-40 flex items-center justify-center gap-1.5 px-5 py-3.5 bg-primary text-on-primary rounded-full shadow-[0_8px_32px_rgba(0,109,48,0.35)] hover:shadow-[0_12px_48px_rgba(0,109,48,0.55)] hover:-translate-y-0.5 transition-all duration-300 group"
         >
           <span className="material-symbols-outlined text-[22px] group-hover:rotate-90 transition-transform duration-300">add</span>
           <span className="font-bold text-xs tracking-wider uppercase">New Entry</span>
@@ -632,12 +953,12 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
               {/* Type selector toggle */}
               <div>
                 <label className="block font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-2">Transaction Type</label>
-                <div className="flex p-1 bg-surface-container-low rounded-xl relative">
+                <div className="flex p-1 bg-surface-container-low rounded-xl relative border border-outline-variant/30">
                   <button 
                     type="button"
                     onClick={() => setTxType('In')}
                     className={`flex-1 py-2 text-xs font-bold rounded-lg text-center z-10 transition-all ${
-                      txType === 'In' ? 'bg-[#E8F5E9] text-[#2E7D32] shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                      txType === 'In' ? 'bg-primary text-white shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high/50 hover:text-on-surface'
                     }`}
                   >
                     Cash In (+)
@@ -646,7 +967,7 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
                     type="button"
                     onClick={() => setTxType('Out')}
                     className={`flex-1 py-2 text-xs font-bold rounded-lg text-center z-10 transition-all ${
-                      txType === 'Out' ? 'bg-[#FFEBEE] text-[#C62828] shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                      txType === 'Out' ? 'bg-primary text-white shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high/50 hover:text-on-surface'
                     }`}
                   >
                     Cash Out (-)
@@ -702,30 +1023,111 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-2">Category</label>
-                  <select 
-                    value={txCat} 
-                    onChange={(e) => setTxCat(e.target.value)}
-                    className="w-full bg-surface border border-outline-variant rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                    required
-                  >
-                    {categories.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                  <div className="relative" ref={catDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setCatDropdownOpen(!catDropdownOpen)}
+                      className="w-full bg-surface border border-outline-variant rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between transition-all"
+                    >
+                      <span className="truncate">{categories.find(c => c.id === txCat)?.name || "Select Category"}</span>
+                      <span className="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_drop_down</span>
+                    </button>
+
+                    {catDropdownOpen && (
+                      <div className="absolute left-0 mt-1.5 w-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 overflow-hidden flex flex-col text-xs max-h-56">
+                        {/* Search Input */}
+                        <div className="p-2 border-b border-outline-variant/20 bg-surface-container-low/20">
+                          <input
+                            type="text"
+                            value={catSearchQuery}
+                            onChange={(e) => setCatSearchQuery(e.target.value)}
+                            placeholder="Search or add category..."
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-xs outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
+                            autoFocus
+                          />
+                        </div>
+
+                        {/* List */}
+                        <div className="overflow-y-auto py-1 flex-1 max-h-36">
+                          {categories
+                            .filter(c => c.name.toLowerCase().includes(catSearchQuery.toLowerCase()))
+                            .map((c) => {
+                              const isSelected = txCat === c.id;
+                              return (
+                                <button
+                                  key={c.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setTxCat(c.id);
+                                    setCatDropdownOpen(false);
+                                    setCatSearchQuery('');
+                                  }}
+                                  className={`w-full text-left px-3.5 py-2 transition-colors flex items-center justify-between ${
+                                    isSelected 
+                                      ? 'bg-primary/10 text-primary font-bold' 
+                                      : 'hover:bg-primary/5 hover:text-primary'
+                                  }`}
+                                >
+                                  <span>{c.name}</span>
+                                  {isSelected && <span className="material-symbols-outlined text-[16px] text-primary">check</span>}
+                                </button>
+                              );
+                            })}
+
+                          {catSearchQuery.trim() && !categories.some(c => c.name.toLowerCase() === catSearchQuery.trim().toLowerCase()) && (
+                            <button
+                              type="button"
+                              onClick={handleCreateCustomCategory}
+                              className="w-full text-left px-3.5 py-2 text-primary font-semibold hover:bg-primary/5 transition-colors border-t border-outline-variant/10 mt-1 flex items-center gap-1.5"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">add</span>
+                              <span>Add "{catSearchQuery.trim()}"</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
                   <label className="block font-label-caps text-[10px] text-on-surface-variant uppercase font-bold mb-2">Payment Method</label>
-                  <select 
-                    value={txMethod} 
-                    onChange={(e) => setTxMethod(e.target.value)}
-                    className="w-full bg-surface border border-outline-variant rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                  >
-                    <option value="Cash">Cash</option>
-                    <option value="Bank">Bank</option>
-                    <option value="Card">Card</option>
-                    <option value="Other">Other</option>
-                  </select>
+                  <div className="relative" ref={methodDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setMethodDropdownOpen(!methodDropdownOpen)}
+                      className="w-full bg-surface border border-outline-variant rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between transition-all"
+                    >
+                      <span>{txMethod}</span>
+                      <span className="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_drop_down</span>
+                    </button>
+
+                    {methodDropdownOpen && (
+                      <div className="absolute left-0 mt-1.5 w-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 overflow-hidden py-1 text-xs">
+                        {["Cash", "Bank", "Card", "Other"].map((method) => {
+                          const isSelected = txMethod === method;
+                          return (
+                            <button
+                              key={method}
+                              type="button"
+                              onClick={() => {
+                                  setTxMethod(method);
+                                  setMethodDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3.5 py-2 transition-colors flex items-center justify-between ${
+                                isSelected 
+                                  ? 'bg-primary/10 text-primary font-bold' 
+                                  : 'hover:bg-primary/5 hover:text-primary'
+                              }`}
+                            >
+                              <span>{method}</span>
+                              {isSelected && <span className="material-symbols-outlined text-[16px] text-primary">check</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -871,7 +1273,7 @@ export default function Transactions({ hideHeader = false, startDate = '', endDa
       {!isReadOnly && (
         <button 
           onClick={handleOpenAdd}
-          className="fixed bottom-6 right-6 z-40 flex items-center justify-center gap-2 px-5 py-4 bg-primary text-on-primary rounded-full shadow-2xl hover:bg-primary-container hover:text-on-primary-container hover:scale-105 active:scale-95 transition-all font-bold text-sm tracking-wide border border-primary/20"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex items-center justify-center gap-2 px-5 py-4 bg-primary text-on-primary rounded-full shadow-2xl hover:bg-primary-container hover:text-on-primary-container hover:scale-105 active:scale-95 transition-all font-bold text-sm tracking-wide border border-primary/20"
           title="Add Transaction"
         >
           <span className="material-symbols-outlined text-[24px]">add</span>
