@@ -118,9 +118,9 @@ export default function Header({ onMenuClick }) {
         <div className="flex items-center gap-1.5 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <img 
+              src="/icons.svg"
               alt="CashBook Logo" 
-              className="h-7 w-auto sm:h-8 object-contain" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJm-CmABP0LkKzZyWNdTo-FpbY89aEe6vMmDzfu43y67Lp2A06BOgMnSjRbDiXaXIm3MF-lwh6TBIu68EFIXn3JU6PCje8eKjG0kgfbNl1yNRs0rOOF4lgr5o-Lxd4A2PueiyQbbjZFd0uFutPn4hkrugL9e9jatj3O0GBfhkCpddXOS4Ja_RwuZYWKpaw1iTr_22dsTJ8RG4_-b--Hbd8QpRV7Y212iiOGwbiR6HBt-ETLFXTVYVK"
+              className="w-8 h-8 rounded-lg object-contain" 
             />
             <span className="hidden md:block font-headline-lg text-headline-lg text-primary select-none mr-1 sm:mr-2">CashBook</span>
           </div>
