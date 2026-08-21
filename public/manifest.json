@@ -1,0 +1,17 @@
+{
+  "name": "CashBook",
+  "short_name": "CashBook",
+  "description": "Smart Financial & Cash Ledger App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

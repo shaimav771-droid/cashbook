@@ -3,6 +3,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { AuthPage } from '@/features/auth/components/AuthPage';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import InstallPrompt from './InstallPrompt';
 import { useApp } from '../context/AppContext';
 
 interface LayoutProps {
@@ -36,6 +37,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-background text-on-background flex flex-col font-body-md overflow-x-hidden w-full max-w-full">
+      <InstallPrompt />
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex flex-1 pt-[72px] overflow-x-hidden w-full max-w-full">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
