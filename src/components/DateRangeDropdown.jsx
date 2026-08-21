@@ -148,7 +148,7 @@ export default function DateRangeDropdown({
         type="button"
         onClick={() => {
           setPeriodDropdownOpen(!periodDropdownOpen);
-          setShowCalendar(currentPeriod === 'custom');
+          setShowCalendar(false);
         }}
         className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm text-xs font-semibold hover:shadow-md transition-all animate-fade-in text-on-surface"
       >
@@ -158,14 +158,14 @@ export default function DateRangeDropdown({
       </button>
 
       {periodDropdownOpen && (
-        <div className="absolute right-0 mt-2 bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden text-xs min-w-[160px]">
+        <div className="absolute left-0 right-auto sm:left-0 sm:right-auto mt-2 z-50 w-[280px] sm:w-[320px] max-w-[90vw] bg-white rounded-2xl shadow-xl border border-gray-100 p-3 flex flex-col text-xs overflow-hidden">
           {!showCalendar ? (
-            <div className="p-2 flex flex-col gap-1">
-              <div className="px-3 py-1 text-[10px] uppercase font-bold text-on-surface-variant/60 tracking-wider">Presets</div>
-              <button type="button" onClick={() => handlePeriodSelect('today', 'Today')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'today' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>Today</button>
-              <button type="button" onClick={() => handlePeriodSelect('this_week', 'This Week')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_week' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>This Week</button>
-              <button type="button" onClick={() => handlePeriodSelect('this_month', 'This Month')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_month' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>This Month</button>
-              <button type="button" onClick={() => handlePeriodSelect('all', 'All Time')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'all' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-surface-container-low'}`}>All Time</button>
+            <div className="flex flex-col gap-1 w-full text-gray-800">
+              <div className="px-3 py-1 text-[10px] uppercase font-bold text-gray-500 tracking-wider">Presets</div>
+              <button type="button" onClick={() => handlePeriodSelect('today', 'Today')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'today' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-gray-100'}`}>Today</button>
+              <button type="button" onClick={() => handlePeriodSelect('this_week', 'This Week')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_week' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-gray-100'}`}>This Week</button>
+              <button type="button" onClick={() => handlePeriodSelect('this_month', 'This Month')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'this_month' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-gray-100'}`}>This Month</button>
+              <button type="button" onClick={() => handlePeriodSelect('all', 'All Time')} className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${currentPeriod === 'all' ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-gray-100'}`}>All Time</button>
               <button 
                 type="button"
                 onClick={() => {
@@ -175,37 +175,37 @@ export default function DateRangeDropdown({
                     setTempTo(currentCustomEndDate);
                   }
                 }} 
-                className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors border-t border-outline-variant/20 mt-1 font-semibold text-primary ${currentPeriod === 'custom' ? 'bg-primary/15' : 'hover:bg-surface-container-low'}`}
+                className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors border-t border-gray-100 mt-1 font-semibold text-primary ${currentPeriod === 'custom' ? 'bg-primary/15' : 'hover:bg-gray-100'}`}
               >
                 Custom Range
               </button>
             </div>
           ) : (
-            <div className="w-[280px] p-3 flex flex-col gap-3">
-              <div className="flex items-center gap-1.5 -ml-1 border-b border-outline-variant/30 pb-2 mb-1">
+            <div className="w-full flex flex-col gap-3 text-gray-800">
+              <div className="flex items-center gap-1.5 -ml-1 border-b border-gray-100 pb-2 mb-1">
                 <button
                   type="button"
                   onClick={() => setShowCalendar(false)}
-                  className="p-1 hover:bg-surface-container-low rounded-full flex items-center justify-center"
+                  className="p-1 hover:bg-gray-100 rounded-full flex items-center justify-center"
                 >
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_back</span>
+                  <span className="material-symbols-outlined text-[16px] text-gray-500">arrow_back</span>
                 </button>
-                <span className="font-semibold text-xs text-on-surface">Select Custom Range</span>
+                <span className="font-semibold text-xs text-gray-800">Select Custom Range</span>
               </div>
 
               <div className="flex items-center justify-between mb-1">
-                <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-surface-container-low rounded-full">
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">chevron_left</span>
+                <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-gray-100 rounded-full">
+                  <span className="material-symbols-outlined text-[16px] text-gray-600">chevron_left</span>
                 </button>
-                <span className="font-bold text-xs text-on-surface">
+                <span className="font-bold text-xs text-gray-800">
                   {calendarMonthName()} {calendarYear}
                 </span>
-                <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-surface-container-low rounded-full">
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">chevron_right</span>
+                <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-gray-100 rounded-full">
+                  <span className="material-symbols-outlined text-[16px] text-gray-600">chevron_right</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-7 gap-y-1 text-center font-bold text-[10px] text-on-surface-variant/70 mb-0.5">
+              <div className="grid grid-cols-7 gap-y-1 text-center font-bold text-[10px] text-gray-500 mb-0.5">
                 <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
               </div>
 
@@ -213,10 +213,10 @@ export default function DateRangeDropdown({
                 {generateCalendarDays()}
               </div>
 
-              <div className="flex flex-col gap-2 pt-2 border-t border-outline-variant/30 text-[10px]">
-                <div className="flex items-center justify-between text-on-surface-variant">
-                  <span>From: <strong className="text-on-surface font-mono-data">{tempFrom || 'Select'}</strong></span>
-                  <span>To: <strong className="text-on-surface font-mono-data">{tempTo || 'Select'}</strong></span>
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-100 text-[10px]">
+                <div className="flex items-center justify-between text-gray-500">
+                  <span>From: <strong className="text-gray-800 font-mono-data">{tempFrom || 'Select'}</strong></span>
+                  <span>To: <strong className="text-gray-800 font-mono-data">{tempTo || 'Select'}</strong></span>
                 </div>
                 <div className="flex items-center justify-end gap-2 mt-1">
                   <button
@@ -225,7 +225,7 @@ export default function DateRangeDropdown({
                       setTempFrom(null);
                       setTempTo(null);
                     }}
-                    className="px-2.5 py-1 border border-outline-variant rounded-md hover:bg-surface-container-low text-on-surface transition-colors"
+                    className="px-2.5 py-1 border border-gray-200 rounded-md hover:bg-gray-100 text-gray-700 transition-colors"
                   >
                     Clear
                   </button>
